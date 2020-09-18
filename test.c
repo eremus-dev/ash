@@ -32,3 +32,6 @@ bool example_test(void){
     }
 
 }
+
+// comand = ""
+// 
