@@ -1,23 +1,27 @@
 #include "ashell.h"
 #include <assert.h>
 #include <stdio.h>
+#include <stdbool.h>
 
-#define TOTAL 1
-
-int example_test(void);
+bool example_test(void);
 
 int main(void) {
         
-    int fails = 0;
+    int fail = 0;
+    int success = 0;
 
-    fails += example_test(void);
+     if(example_test()){
+         success++;
+     } else {
+         fail++;
+     }
 
-    printf("Test passed %d\nTest failed %d\n", TOTAL-fails, fails);
+    printf("Test passed %d\nTest failed %d\n", success, fail);
 
     return 0;
 }
 
-void example_test(void) {
+bool example_test(void){
 
     if(true){
         printf("Test example_test: test passed\n");
