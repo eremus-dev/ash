@@ -2,12 +2,6 @@
 Header file for the Job and Command Parser.
 
 Returns a JOB queue of job structs for the ashell to execute.
-
-JOB reference a Command Queue:
-
-Command Queue:
-
-
 */
 
 #include "ashell_const.h"
