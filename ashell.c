@@ -2,5 +2,22 @@
 
 void exec_shell() {
 
+    JOB job_queue[MAX_JOBS]; 
+    char commandline[MAX_COMMAND_LEN]; 
+
+    while(true){
+        get_commandline(commandline);
+        int jobcount = parse_commandline(command, job_queue);
+        
+        if(jobcount == -1)
+
+        for(int i = 0; i < jobcount; i++){
+            exec_command(job_queue[i].command_queue);
+        }
+
+
+    }
+
     return 0;
 }
+

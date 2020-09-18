@@ -1,0 +1,4 @@
+*.o
+test
+ashell
+parser
