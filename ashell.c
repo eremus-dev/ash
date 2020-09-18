@@ -7,7 +7,7 @@ void exec_shell() {
 
     while(true){
         get_commandline(commandline);
-        int jobcount = parse_commandline(command, job_queue);
+        int jobcount = parse_commandline(commandline, job_queue);
         
         if(jobcount == -1)
 
