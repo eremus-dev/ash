@@ -10,7 +10,9 @@ int main(void) {
     int fail = 0;
     int success = 0;
 
-    
+    JOB j1[2];
+    char *com = "ls -l";
+    parse_commandline(com, j1);
 
     /*if(example_test()){
         success++;
