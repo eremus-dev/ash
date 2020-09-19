@@ -1,5 +1,15 @@
 #include "ashell.h"
 
+void get_commandline(char * commandline)
+{
+    return;
+}
+
+void exec_command(Command * command_queue)
+{
+    return;
+}
+
 void exec_shell() {
 
     JOB job_queue[MAX_JOBS]; 
@@ -18,6 +28,6 @@ void exec_shell() {
 
     }
 
-    return 0;
+    return;
 }
 
