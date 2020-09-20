@@ -12,12 +12,16 @@ Command Queue:
 
 #include "ashell_const.h"
 
+#define jobseparators ";&\n"
+#define commandseparators "<>|"
+#define argumentseparators " "
+
 /**
  *  The struct to store the context associated with a command.
  *  
  */
 typedef struct Command {
-    char * commands[MAX_COMMAND_LEN]; // points to token in commandline ashell.c:commandline:6
+    char * commands[MAX_COMMAND_LEN]; // points to token in commandline ashell.c:commandline:16
     char * stdin; // points to special stdin condition, eg. < or |
     char * stdout; // points to special stdout condition
 } Command;
@@ -26,7 +30,7 @@ typedef struct Command {
  * The struct to store the command queue that composes a job and the context of the job.
  */
 typedef struct JOB {
-    // pointers to command structs commandline in ashell.c:commandline:6 
+    // pointers to command structs commandline in ashell.c:commandline:16 
     // to be dynamically allocated by parsers and free'd from ashell exec_command
     // 
     Command * command_queue; 
