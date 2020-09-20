@@ -5,6 +5,8 @@ Functions to implement:
     cd
     exit
 */
+#ifndef UTILITIES_H
+#define UTILITIES_H
 
 // function to change the current prompt string.
 void change_prompt(char * new_string);
@@ -14,3 +16,5 @@ void change_pwd(char * path);
 
 // Closes all the shells associated resources and exits.
 void exit();
+
+#endif
