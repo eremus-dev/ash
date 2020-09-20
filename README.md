@@ -3,8 +3,8 @@ Another Shell indefensibly written in C.
 
 Shell Project for operating systems unit. 
 
-Authors: 
+##### Authors: 
     - Nathan Brysland
     - Sam Glenister
 
-Do not use this code. It is bad.
+This code is being placed under the BADCODE License. Under no circumstance must this code be copied, distributed or used. There is enough bad C in the world. Just use that.
