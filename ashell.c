@@ -22,7 +22,7 @@ void exec_shell() {
         if(jobcount == -1)
 
         for(int i = 0; i < jobcount; i++){
-            exec_command(job_queue[i].command_queue);
+            //exec_command(job_queue[i].command_queue);
         }
 
 

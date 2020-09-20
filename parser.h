@@ -7,10 +7,14 @@ Returns a JOB queue of job structs for the ashell to execute.
 #define PARSER_H
 
 #include "ashell_const.h"
+#include <stddef.h> //for NULL
+#include <string.h> //for strtok()
+#include <stdio.h>
 
 #define jobseparators ";&\n"
 #define commandseparators "<>|"
 #define argumentseparators " "
+
 
 /**
  *  The struct to store the context associated with a command.
@@ -29,7 +33,7 @@ typedef struct Jobs {
     // pointers to command structs commandline in ashell.c:commandline:6 
     // to be dynamically allocated by parsers and free'd from ashell exec_command
     // 
-    Command * command_queue; 
+    Command *command_queue[MAX_COMMAND_LEN]; 
     int command_count;
     char sep;
 } JOB;
@@ -44,5 +48,7 @@ int parse_commandline(char * commandline, JOB * job_queue);
  * Function to free memory allocated in Job queue in the event of bad grammar
  */
 void abort_parsing(int job_count, JOB * queue);
+
+int tokenise (char line[], char *token[]);
 
 #endif
