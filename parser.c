@@ -4,7 +4,7 @@
 
 int parse_commandline(char * commandline, JOB * job_queue)
 {
-    
+    //need to figure out where token array is made and passed.
     char *tokens[MAX_COMMAND_LEN];
 
     tokenise(commandline, tokens);
@@ -14,6 +14,8 @@ int parse_commandline(char * commandline, JOB * job_queue)
     int n = fill_structs(tokens, job_queue);
 
     print_jobs(job_queue, n, tokens);
+
+    free_queue(job_queue, n);
     
     return 0;
 }
@@ -55,9 +57,10 @@ int fill_structs(char *token[], JOB *job_queue)
     {
         if (strcmp(token[i], ";") == 0)  //add functionality for ; & separators
         {
-            JOB *j1 = malloc(sizeof(JOB));
-            build_job_struct(j1, token, start, i-1, i);
-            job_queue[job_num] = *j1;
+            JOB j1;
+            //= malloc(sizeof(JOB));
+            build_job_struct(&j1, token, start, i-1, i);
+            job_queue[job_num] = j1;
             job_num++;
             start = i+1;
         }
@@ -157,4 +160,20 @@ void print_tokens(char *token[])
         i++;
     }
     printf("\n");
+}
+
+void free_queue(JOB *queue, int job_count)
+{
+    for (int i=0; i<job_count; i++)
+    {
+        for (int j=0; j<queue[i].command_count; j++)
+        {
+            free(queue[i].command_queue[j]);
+        }
+        //free(queue[i]);
+    }
+
+    printf("QUEUE FREED\n");
+
+    return;
 }

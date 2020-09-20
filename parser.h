@@ -52,16 +52,39 @@ int parse_commandline(char * commandline, JOB * job_queue);
  */
 void abort_parsing(int job_count, JOB * queue);
 
+/**
+ * Function to separate a string into an array of tokens.
+ */
 int tokenise (char line[], char *token[]);
 
+/**
+ * Function that splits tokens into jobs, to be assigned to JOB structs.
+ */
 int fill_structs(char *token[], JOB *job_queue);
 
+/**
+ * Function that fills out a job struct, creating and saving its command structs.
+ */
 void build_job_struct(JOB *job, char *token[], int start, int end, int sep);
 
+/**
+ * Function that assigns command information to command struct.
+ */
 void build_command_struct(Command *com, char *token[], int start, int end, int sep, int last_sep); 
 
+/**
+ * Function that prints all information about a job queue. (for troublshooting).
+ */
 void print_jobs(JOB * queue, int num_jobs, char * token[]);
 
+/**
+ * Function that prints all tokens in a token array. (for troubleshooting).
+ */
 void print_tokens(char *token[]);
+
+/**
+ * Function that frees all malloced memory in job queue.
+ */
+void free_queue(JOB *queue, int job_count);
 
 #endif

@@ -10,6 +10,9 @@ int main(void) {
     int fail = 0;
     int success = 0;
 
+    //parser testing
+    //use make clean > make test > ./test
+
     JOB j1[3];
     char com[] = "ls -l | echo ; ps -lH ; ls ;";
     parse_commandline(com, j1);
