@@ -1,5 +1,8 @@
 
-all: test.o ashell.o parser.o
+all: main.c parser.o ashell.o
+	gcc -Wall -Werror ashell.o main.c parser.o -o ashell 
+
+test: test.o ashell.o parser.o
 	gcc -Wall -Werror ashell.o test.o parser.o -o test 
 
 testm: test.c
