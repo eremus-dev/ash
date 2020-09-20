@@ -10,7 +10,7 @@ Returns a JOB queue of job structs for the ashell to execute.
  *  The struct to store the context associated with a command.
  *  
  */
-typedef struct Command {
+typedef struct Commands {
     char * commands[MAX_COMMAND_LEN]; // points to token in commandline ashell.c:commandline:6
     char * stdin; // points to special stdin condition, eg. < or |
     char * stdout; // points to special stdout condition
@@ -19,7 +19,7 @@ typedef struct Command {
 /**
  * The struct to store the command queue that composes a job and the context of the job.
  */
-typedef struct JOB {
+typedef struct Jobs {
     // pointers to command structs commandline in ashell.c:commandline:6 
     // to be dynamically allocated by parsers and free'd from ashell exec_command
     // 

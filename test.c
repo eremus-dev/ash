@@ -1,5 +1,4 @@
 #include "ashell.h"
-#include "parser.h" testing only
 #include <assert.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -30,10 +29,10 @@ bool example_test(void){
 
     if(true){
         printf("Test example_test: test passed\n");
-        return 0;
+        return true;
     } else {
         printf("Test example_test: test_failed\n");
-        return 1;
+        return false;
     }
 }
 
