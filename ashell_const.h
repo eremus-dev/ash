@@ -7,4 +7,7 @@
 // Max number of commandline length
 #define MAX_COMMAND_LEN 1000
 
+// Max number of arguments in command struct. temporary
+#define MAX_ARG_LEN 1000
+
 #endif
