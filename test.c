@@ -10,8 +10,8 @@ int main(void) {
     int fail = 0;
     int success = 0;
 
-    JOB j1[2];
-    char com[] = "ls -l | echo ; ps ;";
+    JOB j1[3];
+    char com[] = "ls -l | echo ; ps -lH ; ls ;";
     parse_commandline(com, j1);
 
     if(example_test()){

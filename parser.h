@@ -23,8 +23,8 @@ Returns a JOB queue of job structs for the ashell to execute.
  */
 typedef struct Commands {
     //char * commands[MAX_COMMAND_LEN]; // points to token in commandline ashell.c:commandline:6
-    int first; //index of first command arg in token
-    int last; //index of last command arg in token
+    int first; //index of first command arg in token array
+    int last; //index of last command arg in token array
     char * stdin; // points to special stdin condition, eg. < or |
     char * stdout; // points to special stdout condition
 } Command;
@@ -36,9 +36,9 @@ typedef struct Jobs {
     // pointers to command structs commandline in ashell.c:commandline:6 
     // to be dynamically allocated by parsers and free'd from ashell exec_command
     // 
-    Command *command_queue[MAX_COMMAND_LEN]; 
-    int command_count;
-    char sep;
+    Command *command_queue[MAX_COMMAND_LEN]; //array of command structs, remember to free()
+    int command_count; //number of command structs in command_queue.
+    int sep; //index of separator in token array for this job (& or ;).
 } JOB;
 
 /**
@@ -54,10 +54,14 @@ void abort_parsing(int job_count, JOB * queue);
 
 int tokenise (char line[], char *token[]);
 
-void fill_structs(char *token[], JOB *job_queue);
+int fill_structs(char *token[], JOB *job_queue);
 
 void build_job_struct(JOB *job, char *token[], int start, int end, int sep);
 
 void build_command_struct(Command *com, char *token[], int start, int end, int sep, int last_sep); 
+
+void print_jobs(JOB * queue, int num_jobs, char * token[]);
+
+void print_tokens(char *token[]);
 
 #endif
