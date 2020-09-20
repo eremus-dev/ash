@@ -10,6 +10,7 @@ Returns a JOB queue of job structs for the ashell to execute.
 #include <stddef.h> //for NULL
 #include <string.h> //for strtok()
 #include <stdio.h>
+#include <stdlib.h> //for malloc()
 
 #define jobseparators ";&\n"
 #define commandseparators "<>|"
@@ -21,7 +22,9 @@ Returns a JOB queue of job structs for the ashell to execute.
  *  
  */
 typedef struct Commands {
-    char * commands[MAX_COMMAND_LEN]; // points to token in commandline ashell.c:commandline:6
+    //char * commands[MAX_COMMAND_LEN]; // points to token in commandline ashell.c:commandline:6
+    int first; //index of first command arg in token
+    int last; //index of last command arg in token
     char * stdin; // points to special stdin condition, eg. < or |
     char * stdout; // points to special stdout condition
 } Command;
@@ -50,5 +53,11 @@ int parse_commandline(char * commandline, JOB * job_queue);
 void abort_parsing(int job_count, JOB * queue);
 
 int tokenise (char line[], char *token[]);
+
+void fill_structs(char *token[], JOB *job_queue);
+
+void build_job_struct(JOB *job, char *token[], int start, int end, int sep);
+
+void build_command_struct(Command *com, char *token[], int start, int end, int sep, int last_sep); 
 
 #endif
