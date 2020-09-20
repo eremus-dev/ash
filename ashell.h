@@ -1,3 +1,6 @@
+#ifndef ASHELL_H
+#define ASHELL_H
+
 #include "parser.h"
 #include "ashell_const.h"
 
@@ -6,3 +9,5 @@
 void exec_shell(void);
 void get_commandline(char * commandline);
 void exec_command(Command * command_queue);
+
+#endif

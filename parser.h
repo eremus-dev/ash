@@ -3,6 +3,8 @@ Header file for the Job and Command Parser.
 
 Returns a JOB queue of job structs for the ashell to execute.
 */
+#ifndef PARSER_H
+#define PARSER_H
 
 #include "ashell_const.h"
 
@@ -38,3 +40,5 @@ int parse_commandline(char * commandline, JOB * job_queue);
  * Function to free memory allocated in Job queue in the event of bad grammar
  */
 void abort_parsing(int job_count, JOB * queue);
+
+#endif
