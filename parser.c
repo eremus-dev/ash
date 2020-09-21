@@ -121,7 +121,7 @@ void build_command_struct(Command *com, char *token[], int start, int end, int s
     return;
 }
 
-void print_jobs(JOB * queue, int num_jobs, char * token[])  //add another loop to go over arguments in command.
+void print_jobs(JOB * queue, int num_jobs, char * token[]) 
 {
     
     for (int i=0; i<num_jobs; i++)
@@ -166,7 +166,12 @@ void free_queue(JOB *queue, int job_count)
         //free(queue[i]);
     }
 
-    printf("QUEUE FREED\n");
+    //printf("QUEUE FREED\n"); //removed for testing readability
 
+    return;
+}
+
+void space_maker()
+{
     return;
 }

@@ -5,17 +5,31 @@
 
 bool example_test(void);
 bool parse_commandline_test(void); 
+bool parse_check_job_sep(void);
+//bool parse_check_com_arg(void);
 
 int main(void) {
         
     int fail = 0;
     int success = 0;
 
+    //parser tests
+
+    //struct visual check test
     if(parse_commandline_test()){
         printf("Test parse_commandline_test passed\n");
         success++;
     } else {
         printf("Test parse_commandline_test failed\n");
+        fail++;
+    }
+    
+    //job structs separator test
+    if(parse_check_job_sep()){
+        printf("Test parse_check_job_sep passed\n");
+        success++;
+    } else {
+        printf("Test parse_check_job_sep failed\n");
         fail++;
     }
 
@@ -51,20 +65,20 @@ bool parse_commandline_test(){
     int job_count = parse_commandline(com, job_queue, tokens);
 
     for(int i = 0; i < job_count; i++){
-        printf("\nJob %d:\n", i);
+        printf("\nJob %d: (%s)\n", i, tokens[job_queue[i].sep]);  //added job separator
         
         for(int j = 0; j < job_queue[i].command_count; j++){            
             int t = job_queue[i].command_queue[j]->first;
             int n = 0;
 
-            printf("Command %d: ", j); 
+            printf("Command %d: ", j);  //added command separators
+            printf("%s ", job_queue[i].command_queue[j]->stdin == NULL ? "" : job_queue[i].command_queue[j]->stdin);
             while( (t+n) !=  job_queue[i].command_queue[j]->last+1 ) {
                 
                 printf("%s ", tokens[t + n]);
                 n++;        
-            }
-        
-            printf("\n");
+            }  //added command separators
+            printf("%s\n", job_queue[i].command_queue[j]->stdout == NULL ? "" : job_queue[i].command_queue[j]->stdout);
         }
         printf("\n");
     }
@@ -73,3 +87,43 @@ bool parse_commandline_test(){
     return false;
 
 }
+
+bool parse_check_job_sep(void)
+{
+    JOB job_queue[MAX_JOBS];
+ 
+    char * tokens[MAX_ARG_LEN];
+
+    //assuming commands and separated are spaced apart, and command is ended with ';'.
+    char com[] = "ls -l ; ps & echo ;";
+ 
+    int job_count = parse_commandline(com, job_queue, tokens);
+
+    if (job_count != 3)  //check correct number of jobs were collected.
+    {
+        perror("ERROR: job_count not matching.");
+        return false;
+    }
+    //to do: add check for index out of range error.
+    if (strcmp(tokens[job_queue[0].sep], ";") != 0)  //check that first job has ';' separator.
+    {
+        perror("ERROR: job struct ';' separator not matching");
+        return false;
+    }
+    
+    if (strcmp(tokens[job_queue[1].sep], "&") != 0)  //check that second job has '&' separator.
+    {
+        perror("ERROR: job struct '&' separator not matching");
+        return false;
+    }
+    
+    if (strcmp(tokens[job_queue[2].sep], ";") != 0)  //check that third job has ';' separator.
+    {
+        perror("ERROR: job struct ';' separator not matching");
+        return false;
+    }
+    
+    free_queue(job_queue, job_count);  //free the stuff
+    return true;
+}
+

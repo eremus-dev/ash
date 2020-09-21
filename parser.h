@@ -25,7 +25,7 @@ typedef struct Commands {
     //char * commands[MAX_COMMAND_LEN]; // points to token in commandline ashell.c:commandline:6
     int first; //index of first command arg in token array
     int last; //index of last command arg in token array
-    char * stdin; // points to special stdin condition, eg. < or |
+    char * stdin; // points to special stdin condition, eg. < or | (NULL if no condition)
     char * stdout; // points to special stdout condition
 } Command;
 
@@ -38,7 +38,7 @@ typedef struct Jobs {
     // 
     Command *command_queue[MAX_COMMAND_LEN]; //array of command structs, remember to free()
     int command_count; //number of command structs in command_queue.
-    int sep; //index of separator in token array for this job (& or ;).
+    int sep; //index of separator in token array for this job (& or ;). 
 } JOB;
 
 /**
