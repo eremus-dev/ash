@@ -45,7 +45,7 @@ typedef struct Jobs {
  * Function to parse the string received from the commandline.
  * returns number of Jobs in commandline.
  */
-int parse_commandline(char * commandline, JOB * job_queue);
+int parse_commandline(char * commandline, JOB * job_queue, char * tokens[]);
 
 /**
  * Function to free memory allocated in Job queue in the event of bad grammar
