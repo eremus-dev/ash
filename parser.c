@@ -72,7 +72,7 @@ void build_job_struct(JOB *job, char *token[], int start, int end, int sep)
 
     while (token[i] != NULL && i <= end)
     {
-        if (strcmp(token[i], "|") == 0)  //add functionality for | < > separators
+        if (strcmp(token[i], "|") == 0 || strcmp(token[i], "<") == 0 || strcmp(token[i], ">") == 0)  //add functionality for | < > separators
         {
             Command *c1 = malloc(sizeof(Command));
             build_command_struct(c1, token, start, i-1, i, last_sep);
