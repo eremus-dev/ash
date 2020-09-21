@@ -72,7 +72,7 @@ void build_job_struct(JOB *job, char *token[], int start, int end, int sep)
 
     while (token[i] != NULL && i <= end)
     {
-        if (strcmp(token[i], "|") == 0)  //add functionality for | < > separators
+        if (strcmp(token[i], "|") == 0 || strcmp(token[i], "<") == 0 || strcmp(token[i], ">") == 0)  //add functionality for | < > separators
         {
             Command *c1 = malloc(sizeof(Command));
             build_command_struct(c1, token, start, i-1, i, last_sep);
@@ -121,7 +121,7 @@ void build_command_struct(Command *com, char *token[], int start, int end, int s
     return;
 }
 
-void print_jobs(JOB * queue, int num_jobs, char * token[])  //add another loop to go over arguments in command.
+void print_jobs(JOB * queue, int num_jobs, char * token[]) 
 {
     
     for (int i=0; i<num_jobs; i++)
@@ -166,7 +166,12 @@ void free_queue(JOB *queue, int job_count)
         //free(queue[i]);
     }
 
-    printf("QUEUE FREED\n");
+    //printf("QUEUE FREED\n"); //removed for testing readability
 
+    return;
+}
+
+void space_maker()
+{
     return;
 }
