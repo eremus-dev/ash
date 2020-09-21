@@ -12,12 +12,13 @@ void exec_command(Command * command_queue)
 
 void exec_shell() {
 
-    JOB job_queue[MAX_JOBS]; 
+    JOB job_queue[MAX_JOBS];
+    char * tokens[MAX_ARG_LEN]; 
     char commandline[MAX_COMMAND_LEN]; 
 
     while(true){
         get_commandline(commandline);
-        int jobcount = parse_commandline(commandline, job_queue);
+        int jobcount = parse_commandline(commandline, job_queue, tokens);
         
         if(jobcount == -1)
 
