@@ -92,8 +92,12 @@ bool parse_commandline_test(){
     JOB job_queue[MAX_JOBS];
  
     char * tokens[MAX_ARG_LEN];
-    char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234 ;";
- 
+    
+    // Should all give the same results.
+    //char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234 ;"; // PASSES
+    char com[] = "ls -l | echo; ps -lH; ls; echo & ls & ps -e | grep 1234;"; // FAILS
+    //char com[] = "ls -l | echo; ps -lH; ls; echo& ls& ps -e | grep 1234;"; // SEGFAULTS
+
     int job_count = parse_commandline(com, job_queue, tokens);
 
     // TEST for "ls -l | echo ;"
@@ -235,7 +239,6 @@ bool parse_commandline_test(){
         perror("ERROR: Job 2 - Command 0 - sep");
         return false;
     }
-
 
     free_queue(job_queue, job_count);
     return true;
