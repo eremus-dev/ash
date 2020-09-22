@@ -25,8 +25,8 @@ typedef struct Commands {
     //char * commands[MAX_COMMAND_LEN]; // points to token in commandline ashell.c:commandline:6
     int first; //index of first command arg in token array
     int last; //index of last command arg in token array
-    char * stdin; // points to special stdin condition, eg. < or | (NULL if no condition)
-    char * stdout; // points to special stdout condition
+    char * in_sep; // points to special in_sep condition, eg. < or | (NULL if no condition)
+    char * out_sep; // points to special out_sep condition
 } Command;
 
 /**

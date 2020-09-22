@@ -114,8 +114,8 @@ void build_command_struct(Command *com, char *token[], int start, int end, int s
 {
     com->first = start;
     com->last = end;
-    com->stdout = sep < 0 ? NULL : token[sep];
-    com->stdin = last_sep < 0 ? NULL : token[last_sep];
+    com->out_sep = sep < 0 ? NULL : token[sep];
+    com->in_sep = last_sep < 0 ? NULL : token[last_sep];
     
     return;
 }
