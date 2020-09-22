@@ -4,8 +4,8 @@
 
 int parse_commandline(char * commandline, JOB * job_queue, char * tokens[])
 {
-    //terminate_command(commandline); //segfaults because no space is added before ';', however once we add ' ' between tokens then we should be golden.
-
+    //terminate_command(commandline); 
+    
     tokenise(commandline, tokens);
 
     int job_num = fill_structs(tokens, job_queue);
@@ -19,6 +19,11 @@ void abort_parsing(int job_count, JOB * queue)
     exit(-1);
 }
 
+/*
+segfaults because no space is added before ';', 
+however once we add ' ' between tokens then we should be golden. 
+this functionality maybe should live in the commandline formatter though.
+*/
 void terminate_command(char line[]){
     
     size_t len = strlen(line);
