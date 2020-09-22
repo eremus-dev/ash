@@ -94,9 +94,12 @@ bool parse_commandline_test(){
     char * tokens[MAX_ARG_LEN];
     
     // Should all give the same results.
-    //char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234 ;"; // PASSES
-    char com[] = "ls -l | echo; ps -lH; ls; echo & ls & ps -e | grep 1234;"; // FAILS
+    char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234 ;"; // PASSES
+    //char com[] = "ls -l | echo; ps -lH; ls; echo & ls & ps -e | grep 1234;"; // FAILS
+    //char com[] = "ls -l | echo;ps -lH;ls;echo&ls&ps -e | grep 1234;"; // SEGFAULTS
+    //char com[] = "ls -l|echo;ps -lH;ls;echo&ls&ps -e|grep 1234;"; // SEGFAULTS
     //char com[] = "ls -l | echo; ps -lH; ls; echo& ls& ps -e | grep 1234;"; // SEGFAULTS
+    //char com[] = "ls -l | echo; ps -lH; ls; echo& ls& ps -e | grep 1234"; // SEGFAULTS
 
     int job_count = parse_commandline(com, job_queue, tokens);
 
