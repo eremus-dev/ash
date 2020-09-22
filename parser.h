@@ -14,7 +14,7 @@ Returns a JOB queue of job structs for the ashell to execute.
 
 #define jobseparators ";&\n"
 #define commandseparators "<>|"
-#define argumentseparators " "
+#define argumentseparators " \n"
 
 
 /**
@@ -25,8 +25,8 @@ typedef struct Commands {
     //char * commands[MAX_COMMAND_LEN]; // points to token in commandline ashell.c:commandline:6
     int first; //index of first command arg in token array
     int last; //index of last command arg in token array
-    char * stdin; // points to special stdin condition, eg. < or | (NULL if no condition)
-    char * stdout; // points to special stdout condition
+    char * in_sep; // points to special in_sep condition, eg. < or | (NULL if no condition)
+    char * out_sep; // points to special out_sep condition
 } Command;
 
 /**
@@ -86,5 +86,7 @@ void print_tokens(char *token[]);
  * Function that frees all malloced memory in job queue.
  */
 void free_queue(JOB *queue, int job_count);
+
+char * remove_newline(char * commandline);
 
 #endif
