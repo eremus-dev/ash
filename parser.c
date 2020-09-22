@@ -48,7 +48,7 @@ int fill_structs(char *token[], JOB *job_queue)
 
     while (token[i] != NULL)
     {
-        if (strcmp(token[i], ";") == 0 | strcmp(token[i], "&") == 0)  //add functionality for ; & separators
+        if (strcmp(token[i], ";") == 0 | strcmp(token[i], "&") == 0)  //TODO not sure this is sound. Test it.
         {
             JOB j1;
             //= malloc(sizeof(JOB));
@@ -56,8 +56,7 @@ int fill_structs(char *token[], JOB *job_queue)
             job_queue[job_num] = j1;
             job_num++;
             start = i+1;
-        }
-        
+        }      
         i++;
     }
 
@@ -124,7 +123,7 @@ void build_command_struct(Command *com, char *token[], int start, int end, int s
 void print_jobs(JOB * queue, int num_jobs, char * token[]) 
 {
     
-    for (int i=0; i<num_jobs; i++)
+    for (int i=0; i< num_jobs; i++)
     {
         printf("job %d: sep=\"%s\"\n", i+1, token[queue[i].sep]);
         for (int j=0; j<queue[i].command_count; j++)
