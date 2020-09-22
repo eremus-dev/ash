@@ -92,7 +92,7 @@ bool parse_commandline_test(){
     JOB job_queue[MAX_JOBS];
  
     char * tokens[MAX_ARG_LEN];
-    char com[] = "ls -l | echo ; ps -lH ; ls ; echo ; ls & ps -e ;";
+    char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234 ;";
  
     int job_count = parse_commandline(com, job_queue, tokens);
 
@@ -151,6 +151,91 @@ bool parse_commandline_test(){
         perror("ERROR: Job 1 - Command 0 - sep");
         return false;
     }
+
+    // TEST for ls ;
+
+    if (strcmp(tokens[job_queue[2].command_queue[0]->first + 0], "ls") != 0) 
+    {
+        perror("ERROR: Job 2 - Command 0 - Token 0");
+        return false;
+    }
+
+    if (strcmp(tokens[job_queue[2].sep], ";") != 0) 
+    {
+        perror("ERROR: Job 2 - Command 0 - sep");
+        return false;
+    }
+
+    // TEST for  echo ;
+
+    if (strcmp(tokens[job_queue[3].command_queue[0]->first + 0], "echo") != 0) 
+    {
+        perror("ERROR: Job 3 - Command 0 - Token 0");
+        return false;
+    }
+
+    if (strcmp(tokens[job_queue[3].sep], "&") != 0) 
+    {
+        perror("ERROR: Job 3 - Command 0 - sep");
+        return false;
+    }
+
+    // TEST for ls &
+    if (strcmp(tokens[job_queue[4].command_queue[0]->first + 0], "ls") != 0) 
+    {
+        perror("ERROR: Job 4 - Command 0 - Token 0");
+        return false;
+    }
+
+    if (strcmp(tokens[job_queue[4].sep], "&") != 0) 
+    {
+        perror("ERROR: Job 4 - Command 0 - sep");
+        return false;
+    }
+
+    // TEST for ps -e | grep 1234 ;;
+    if (strcmp(tokens[job_queue[5].command_queue[0]->first + 0], "ps") != 0) 
+    {
+        perror("ERROR: Job 5 - Command 0 - Token 0");
+        return false;
+    }
+    
+    if (strcmp(tokens[job_queue[5].command_queue[0]->first + 1], "-e") != 0) 
+    {
+        perror("ERROR: Job 5 - Command 0 - Token 1");
+        return false;
+    }
+
+    if (strcmp(job_queue[5].command_queue[0]->out_sep, "|") != 0) 
+    {
+        perror("ERROR: Job 5 - Command 0 - out_sep");
+        return false;
+    }
+
+    if (strcmp(tokens[job_queue[5].command_queue[1]->first + 0], "grep") != 0) 
+    {
+        perror("ERROR: Job 5 - Command 1 - Token 0");
+        return false;
+    }
+
+    if (strcmp(tokens[job_queue[5].command_queue[1]->first + 1], "1234") != 0) 
+    {
+        perror("ERROR: Job 5 - Command 1 - Token 1");
+        return false;
+    }
+
+    if (strcmp(job_queue[5].command_queue[1]->in_sep, "|") != 0) 
+    {
+        perror("ERROR: Job 5 - Command 1 - in_sep");
+        return false;
+    }
+    
+    if (strcmp(tokens[job_queue[5].sep], ";") != 0) 
+    {
+        perror("ERROR: Job 2 - Command 0 - sep");
+        return false;
+    }
+
 
     free_queue(job_queue, job_count);
     return true;
