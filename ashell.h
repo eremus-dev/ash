@@ -5,9 +5,12 @@
 #include "ashell_const.h"
 
 #include <stdbool.h>
+#include <unistd.h>
 
 void exec_shell(void);
-void get_commandline(char * commandline);
+char * get_commandline(void);
 void exec_command(Command * command_queue);
+void print_prompt(void);
+void exit_shell(int stat);
 
 #endif

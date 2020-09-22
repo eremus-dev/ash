@@ -1,51 +1,61 @@
 #include "ashell.h"
 
-
-
 void exec_shell() {
 
     JOB job_queue[MAX_JOBS];
     char * tokens[MAX_ARG_LEN]; 
     
-    char * commandline = malloc(MAX_COMMAND_LEN);
-    if(commandline == NULL){
-        perror("Error: Commandline allocation failure");
-    }
-
     while(true){
-        get_commandline(commandline);
+        print_prompt();
+        char * commandline = get_commandline();
         int jobcount = parse_commandline(commandline, job_queue, tokens);
         
-        if(jobcount == -1)
+        printf("Job Count: %d\n", jobcount);
 
-        for(int i = 0; i < jobcount; i++){
-            //exec_command(job_queue[i].command_queue);
+        if(jobcount == -1){
+            printf("Job Count Error: -1");
         }
 
+        print_jobs(job_queue, jobcount, tokens);
 
+        for(int i = 0; i <= jobcount; i++){
+            //exec_command(job_queue[i].command_queue);
+        }
     }
 
     return;
 }
 
 // Function partly inspired by write up: https://brennan.io/2015/01/16/write-a-shell-in-c/
-void get_commandline(char * commandline)
+char * get_commandline(void)
 {
-    int check = getline(commandline, MAX_COMMAND_LEN, stdin);
+    char * commandline = NULL;
+    ssize_t MAX = 0;
 
+    int check = getline(&commandline, &MAX, stdin);
+    
     if(check == -1){
         if(feof(stdin)){
+            exit_shell(EOF);
             exit(0);
         } else {
-            perror("ERROR: In get_commandline, getline failed.");
+            perror("get_commandline");
             exit(-1);
         }
     }
  
-    return;
+    return commandline;
 }
 
 void exec_command(Command * command_queue)
 {
     return;
+}
+
+void print_prompt(void){
+    printf(">> ");
+}
+
+void exit_shell(int stat){
+    printf("exit\n");
 }
