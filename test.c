@@ -86,27 +86,64 @@ bool parse_commandline_test(){
  
     int job_count = parse_commandline(com, job_queue, tokens);
 
-    for(int i = 0; i < job_count; i++){
-        printf("\nJob %d: (%s)\n", i, tokens[job_queue[i].sep]);  //added job separator
-        
-        for(int j = 0; j < job_queue[i].command_count; j++){            
-            int t = job_queue[i].command_queue[j]->first;
-            int n = 0;
+    // TEST for "ls -l | echo ;"
+    if (strcmp(tokens[job_queue[0].command_queue[0]->first + 0], "ls") != 0) 
+    {
+        perror("ERROR: Job 0 - Command 0 - Token 0");
+        return false;
+    }
 
-            printf("Command %d: ", j);  //added command separators
-            printf("%s ", job_queue[i].command_queue[j]->stdin == NULL ? "" : job_queue[i].command_queue[j]->stdin);
-            while( (t+n) !=  job_queue[i].command_queue[j]->last+1 ) {
-                
-                printf("%s ", tokens[t + n]);
-                n++;        
-            }  //added command separators
-            printf("%s\n", job_queue[i].command_queue[j]->stdout == NULL ? "" : job_queue[i].command_queue[j]->stdout);
-        }
-        printf("\n");
+    if (strcmp(tokens[job_queue[0].command_queue[0]->first + 1], "-l") != 0) 
+    {
+        perror("ERROR: Job 0 - Command 0 - Token 1");
+        return false;
+    }
+
+    if (strcmp(job_queue[0].command_queue[0]->stdout, "|") != 0) 
+    {
+        perror("ERROR: Job 0 - Command 0 - Stdout");
+        return false;
+    }
+
+    if (strcmp(tokens[job_queue[0].command_queue[1]->first], "echo") != 0) 
+    {
+        perror("ERROR: Job 0 - Command 1 - Token 0");
+        return false;
+    }
+
+    if (strcmp(job_queue[0].command_queue[1]->stdin, "|") != 0) 
+    {
+        perror("ERROR: Job 0 - Command 1 - stdin");
+        return false;
+    }
+
+    if (strcmp(tokens[job_queue[0].sep], ";") != 0) 
+    {
+        perror("ERROR: Job 0 - sep");
+        return false;
+    }
+
+    // TEST for "ps -lH ;"
+    if (strcmp(tokens[job_queue[1].command_queue[0]->first + 0], "ps") != 0) 
+    {
+        perror("ERROR: Job 1 - Command 0 - Token 0");
+        return false;
+    }
+
+    if (strcmp(tokens[job_queue[1].command_queue[0]->first + 1], "-lH") != 0) 
+    {
+        perror("ERROR: Job 1 - Command 0 - Token 1");
+        return false;
+    }
+    
+    if (strcmp(tokens[job_queue[1].sep], ";") != 0) 
+    {
+        perror("ERROR: Job 1 - Command 0 - sep");
+        return false;
     }
 
     free_queue(job_queue, job_count);
-    return false;
+    return true;
 
 }
 
