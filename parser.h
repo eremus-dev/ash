@@ -53,6 +53,11 @@ int parse_commandline(char * commandline, JOB * job_queue, char * tokens[]);
 void abort_parsing(int job_count, JOB * queue);
 
 /**
+ * Function to terminate commandline with ';' if not already terminated
+ */
+void terminate_command(char line[]);
+
+/**
  * Function to separate a string into an array of tokens.
  */
 int tokenise (char line[], char *token[]);

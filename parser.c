@@ -4,6 +4,7 @@
 
 int parse_commandline(char * commandline, JOB * job_queue, char * tokens[])
 {
+    //terminate_command(commandline); //segfaults because no space is added before ';', however once we add ' ' between tokens then we should be golden.
 
     tokenise(commandline, tokens);
 
@@ -16,6 +17,16 @@ void abort_parsing(int job_count, JOB * queue)
 {
     free_queue(queue, job_count);
     exit(-1);
+}
+
+void terminate_command(char line[]){
+    
+    size_t len = strlen(line);
+    if(line[len - 1] == '\n'){
+        if(line[len - 2] != ';' | line[len - 2] != '&'){
+            line[len-1] = ';';
+        }
+    }
 }
 
 int tokenise (char line[], char *token[])
@@ -37,8 +48,11 @@ int tokenise (char line[], char *token[])
         tk = strtok(NULL, argumentseparators);
         token[i] = tk;
     }
+
     return i;
 }
+
+
 
 int fill_structs(char *token[], JOB *job_queue)
 {

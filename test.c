@@ -95,6 +95,7 @@ bool parse_commandline_test(){
     
     // Should all give the same results.
     char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234 ;"; // PASSES
+    //char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234"; // SEGFAULTS
     //char com[] = "ls -l | echo; ps -lH; ls; echo & ls & ps -e | grep 1234;"; // FAILS
     //char com[] = "ls -l | echo;ps -lH;ls;echo&ls&ps -e | grep 1234;"; // SEGFAULTS
     //char com[] = "ls -l|echo;ps -lH;ls;echo&ls&ps -e|grep 1234;"; // SEGFAULTS

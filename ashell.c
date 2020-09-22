@@ -35,8 +35,6 @@ char * get_commandline(void)
 
     int check = getline(&commandline, &MAX, stdin);
 
-    
-    
     if(check == -1){
         if(feof(stdin)){
             exit_shell(EOF);
