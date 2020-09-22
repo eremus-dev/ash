@@ -8,8 +8,7 @@ void exec_shell() {
     while(true){
         print_prompt();
         char * commandline = get_commandline();
-        //char commandline[] = "ls ; ls ; ls ;";
-        
+
         int jobcount = parse_commandline(commandline, job_queue, tokens);
         
         printf("Job Count: %d\n", jobcount);
@@ -35,6 +34,8 @@ char * get_commandline(void)
     ssize_t MAX = 0;
 
     int check = getline(&commandline, &MAX, stdin);
+
+    
     
     if(check == -1){
         if(feof(stdin)){

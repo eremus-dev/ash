@@ -169,8 +169,3 @@ void free_queue(JOB *queue, int job_count)
 
     return;
 }
-
-void space_maker()
-{
-    return;
-}

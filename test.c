@@ -10,6 +10,7 @@ bool parse_commandline_test(void);
 bool parse_check_job_sep(void);
 bool parse_check_com_arg(void);
 bool parse_check_com_sep(void);
+bool parse_newline_handled(void);
 
 
 int main(void) {
@@ -52,6 +53,15 @@ int main(void) {
         success++;
     } else {
         printf("Test parse_check_com_sep failed\n");
+        fail++;
+    }
+
+    //command sep match test
+    if(parse_newline_handled()){
+        printf("Test parse_newline_handled passed\n");
+        success++;
+    } else {
+        printf("Test parse_newline_handled failed\n");
         fail++;
     }
 
@@ -297,5 +307,25 @@ bool parse_check_com_sep(void)
     }
     
     free_queue(job_queue, job_count);  //free the queue
+    return true;
+}
+
+bool parse_newline_handled(void)
+{
+    JOB job_queue[MAX_JOBS];
+ 
+    char * tokens[MAX_ARG_LEN];
+
+    //assuming commands and separated are spaced apart, and command is ended with ';'.
+    char com[] = "ls ; ls ;\n";
+
+    int job_count = parse_commandline(com, job_queue, tokens);
+
+    if (job_count != 2)  //check correct number of jobs were collected.
+    {
+        perror("ERROR: job_count not matching.");
+        return false;
+    }
+
     return true;
 }

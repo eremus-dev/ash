@@ -14,7 +14,7 @@ Returns a JOB queue of job structs for the ashell to execute.
 
 #define jobseparators ";&\n"
 #define commandseparators "<>|"
-#define argumentseparators " "
+#define argumentseparators " \n"
 
 
 /**
@@ -86,5 +86,7 @@ void print_tokens(char *token[]);
  * Function that frees all malloced memory in job queue.
  */
 void free_queue(JOB *queue, int job_count);
+
+char * remove_newline(char * commandline);
 
 #endif
