@@ -5,6 +5,8 @@
 int parse_commandline(char * commandline, JOB * job_queue, char * tokens[])
 {
     //terminate_command(commandline); 
+
+    add_sep_spacers(commandline);  //ensures is properly spaced between special separators.
     
     tokenise(commandline, tokens);
 
@@ -44,14 +46,26 @@ int tokenise (char line[], char *token[])
 
     while (tk != NULL) {
 
-        ++i;
-        if (i>=MAX_COMMAND_LEN) {
+        i++;
+        if (i>=MAX_ARG_LEN) {
             i = -1;
             break;
         }
 
         tk = strtok(NULL, argumentseparators);
         token[i] = tk;
+    }
+
+    //if no job separator at end of token array, add ';'.
+    if (strcmp(token[i-1], ";") != 0 && strcmp(token[i-1], "&") != 0)  
+    {
+        if (i>=MAX_ARG_LEN) {
+            perror("reached max token array size, add more space");
+            exit(0);
+        }
+        tk = ";";
+        token[i] = tk;
+        i++;
     }
 
     return i;
@@ -183,6 +197,51 @@ void free_queue(JOB *queue, int job_count)
     }
 
     //printf("QUEUE FREED\n"); //removed for testing readability
+
+    return;
+}
+
+void add_sep_spacers(char * commandline)
+{
+    //char special_chars[] = {';','&','|','<','>'};  //maybe make constant.
+
+    char *new_com = malloc(sizeof(char) * strlen(commandline));
+    strcpy(new_com, commandline);
+
+    memset(commandline, 0, sizeof(commandline));
+
+    int j = 0;
+
+    for (int i=0; i<strlen(new_com); i++)
+    {
+        //perhaps turn into a for loop
+        if (new_com[i] == ';' || new_com[i] == '&' || new_com[i] == '|' || new_com[i] == '<' || new_com[i] == '>')
+        {
+            if (i != 0 && new_com[i-1] != ' ')  //if already has space on left, ignore. else add space
+            {
+                commandline[j] = ' ';
+                j++;
+            }
+
+            commandline[j] = new_com[i];
+            j++;
+
+            if (i != strlen(new_com) && new_com[i+1] != ' ')  //if already has space on right, ignore
+            {
+                commandline[j] = ' ';
+                j++;
+            }
+        }
+        else  //for all other characters normal copying.
+        {
+            commandline[j] = new_com[i];
+            j++;
+        }
+    }
+
+    commandline[j] = '\0';
+
+    free(new_com);
 
     return;
 }
