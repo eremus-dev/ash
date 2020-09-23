@@ -57,8 +57,6 @@ int tokenise (char line[], char *token[])
     return i;
 }
 
-
-
 int fill_structs(char *token[], JOB *job_queue)
 {
     int job_num = 0;
