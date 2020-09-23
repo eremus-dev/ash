@@ -92,6 +92,9 @@ void print_tokens(char *token[]);
  */
 void free_queue(JOB *queue, int job_count);
 
-char * remove_newline(char * commandline);
+/**
+ * Function that adds space characters between each of the special separator characters ';','&','|','<','>'.
+ */
+void add_sep_spacers(char * commandline);
 
 #endif

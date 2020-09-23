@@ -10,6 +10,8 @@ void exec_shell() {
         print_prompt();
         char * commandline = get_commandline();
 
+        add_sep_spacers(commandline);
+
         int jobcount = parse_commandline(commandline, job_queue, tokens);
         
         

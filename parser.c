@@ -186,3 +186,48 @@ void free_queue(JOB *queue, int job_count)
 
     return;
 }
+
+void add_sep_spacers(char * commandline)
+{
+    //char special_chars[] = {';','&','|','<','>'};  //maybe make constant.
+
+    char *new_com = malloc(sizeof(char) * strlen(commandline));
+    strcpy(new_com, commandline);
+
+    memset(commandline, 0, sizeof(commandline));
+
+    int j = 0;
+
+    for (int i=0; i<strlen(new_com); i++)
+    {
+        //perhaps turn into a for loop
+        if (new_com[i] == ';' || new_com[i] == '&' || new_com[i] == '|' || new_com[i] == '<' || new_com[i] == '>')
+        {
+            if (i != 0 && new_com[i-1] != ' ')  //if already has space on left, ignore. else add space
+            {
+                commandline[j] = ' ';
+                j++;
+            }
+
+            commandline[j] = new_com[i];
+            j++;
+
+            if (i != strlen(new_com) && new_com[i+1] != ' ')  //if already has space on right, ignore
+            {
+                commandline[j] = ' ';
+                j++;
+            }
+        }
+        else  //for all other characters normal copying.
+        {
+            commandline[j] = new_com[i];
+            j++;
+        }
+    }
+
+    commandline[j] = '\0';
+
+    free(new_com);
+
+    return;
+}
