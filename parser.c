@@ -5,6 +5,8 @@
 int parse_commandline(char * commandline, JOB * job_queue, char * tokens[])
 {
     //terminate_command(commandline); 
+
+    add_sep_spacers(commandline);  //ensures is properly spaced between special separators.
     
     tokenise(commandline, tokens);
 
@@ -44,14 +46,26 @@ int tokenise (char line[], char *token[])
 
     while (tk != NULL) {
 
-        ++i;
-        if (i>=MAX_COMMAND_LEN) {
+        i++;
+        if (i>=MAX_ARG_LEN) {
             i = -1;
             break;
         }
 
         tk = strtok(NULL, argumentseparators);
         token[i] = tk;
+    }
+
+    //if no job separator at end of token array, add ';'.
+    if (strcmp(token[i-1], ";") != 0 && strcmp(token[i-1], "&") != 0)  
+    {
+        if (i>=MAX_ARG_LEN) {
+            perror("reached max token array size, add more space");
+            exit(0);
+        }
+        tk = ";";
+        token[i] = tk;
+        i++;
     }
 
     return i;

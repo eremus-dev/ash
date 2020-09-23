@@ -104,9 +104,9 @@ bool parse_commandline_test(){
     char * tokens[MAX_ARG_LEN];
     
     // Should all give the same results.
-    char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234 ;"; // PASSES
-    //char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234"; // SEGFAULTS
-    //char com[] = "ls -l | echo; ps -lH; ls; echo & ls & ps -e | grep 1234;"; // FAILS
+    //char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234 ;"; // PASSES
+    //char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234"; // PASSES
+    char com[] = "ls -l | echo; ps -lH; ls; echo & ls & ps -e | grep 1234;"; // PASSES
     //char com[] = "ls -l | echo;ps -lH;ls;echo&ls&ps -e | grep 1234;"; // SEGFAULTS
     //char com[] = "ls -l|echo;ps -lH;ls;echo&ls&ps -e|grep 1234;"; // SEGFAULTS
     //char com[] = "ls -l | echo; ps -lH; ls; echo& ls& ps -e | grep 1234;"; // SEGFAULTS
@@ -440,8 +440,6 @@ bool parse_separator_space(void)
 
     //assuming commands and separated are spaced apart, and command is ended with ';'.
     char com[] = "ls; ls&ls ;ls ;\n";
-
-    add_sep_spacers(com);
 
     int job_count = parse_commandline(com, job_queue, tokens);
 
