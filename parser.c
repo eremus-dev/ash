@@ -205,7 +205,7 @@ void add_sep_spacers(char * commandline)
 {
     //char special_chars[] = {';','&','|','<','>'};  //maybe make constant.
 
-    char *new_com = malloc(sizeof(char) * strlen(commandline));
+    char *new_com = malloc(sizeof(char) * strlen(commandline+1));
     strcpy(new_com, commandline);
 
     memset(commandline, 0, sizeof(commandline));
