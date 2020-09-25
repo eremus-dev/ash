@@ -45,7 +45,7 @@ typedef struct Jobs {
  * Function to parse the string received from the commandline.
  * returns number of Jobs in commandline.
  */
-int parse_commandline(char * commandline, char * formline, JOB * job_queue, char * tokens[]);
+int parse_commandline(char * commandline, JOB * job_queue, char * tokens[]);
 
 /**
  * Function to free memory allocated in Job queue in the event of bad grammar
@@ -60,7 +60,7 @@ void terminate_command(char line[]);
 /**
  * Function to separate a string into an array of tokens.
  */
-int tokenise (char *line, char *token[]);
+int tokenise (char line[], char *token[]);
 
 /**
  * Function that splits tokens into jobs, to be assigned to JOB structs.
@@ -95,11 +95,6 @@ void free_queue(JOB *queue, int job_count);
 /**
  * Function that adds space characters between each of the special separator characters ';','&','|','<','>'.
  */
-void add_sep_spacers(char * commandline, char * formline);
-
-/**
- * Function that frees all allocated memory.
- */
-void free_all(char * commandline, JOB *queue, int job_count);
+void add_sep_spacers(char * commandline);
 
 #endif
