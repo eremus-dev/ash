@@ -18,9 +18,6 @@ void exec_shell() {
             perror("parser");
         }
 
-        printf("Job Count: %d\n", jobcount);
-        print_jobs(job_queue, jobcount, tokens);
-
         // for(int i = 0; i <= jobcount; i++){
         //     exec_command(&job_queue[i], tokens);
         // }
@@ -32,20 +29,6 @@ void exec_shell() {
 // Function partly inspired by write up: https://brennan.io/2015/01/16/write-a-shell-in-c/
 char * get_commandline(void)
 {
-    char * commandline = NULL;
-    ssize_t MAX = 0;
-
-    int check = getline(&commandline, &MAX, stdin);
-
-    if(check == -1){
-        if(feof(stdin)){
-            exit_shell(EOF);
-            exit(0);
-        } else {
-            perror("get_commandline");
-            exit(-1);
-        }
-    }
  
     return commandline;
 }
