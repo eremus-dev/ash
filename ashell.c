@@ -2,7 +2,7 @@
 
 void exec_shell() {
 
-    JOB job_queue[MAX_JOBS];
+    command job_queue[MAX_JOBS];
     char * tokens[MAX_ARG_LEN]; 
     
     // never returns
@@ -50,7 +50,7 @@ char * get_commandline(void)
     return commandline;
 }
 
-void exec_command(JOB * job, char * token[])
+void exec_command(command * job, char * token[])
 {
 
     for(int i = 0; i < job->command_count; i++){
