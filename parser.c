@@ -2,17 +2,25 @@
 
 
 
-int parse_commandline(char * commandline, JOB * job_queue, char * tokens[])
+int parse_commandline(char * commandline, char * formline, JOB * job_queue, char * tokens[])
 {
     //terminate_command(commandline); 
 
-    add_sep_spacers(commandline);  //ensures is properly spaced between special separators.
+    add_sep_spacers(commandline, formline);  //ensures is properly spaced between special separators.
+
     
-    tokenise(commandline, tokens);
+    /*tokenise(new_com, tokens);
+    printf("%s 1 ", tokens[0]);
+
+    //free(new_com);  //freed malloced memory.
+
+    printf("%s 1 ", tokens[0]);
 
     int job_num = fill_structs(tokens, job_queue);
+
+    //print_jobs(job_queue, job_num, tokens);
     
-    return job_num;
+    return job_num;*/
 }
 
 void abort_parsing(int job_count, JOB * queue)
@@ -36,13 +44,15 @@ void terminate_command(char line[]){
     }
 }
 
-int tokenise (char line[], char *token[])
+int tokenise (char *line, char *token[])
 {
     char *tk;
     int i=0;
 
+
     tk = strtok(line, argumentseparators);
     token[i] = tk;
+
 
     while (tk != NULL) {
 
@@ -77,7 +87,9 @@ int fill_structs(char *token[], JOB *job_queue)
     int i = 0;
     int start = 0;
 
-    while (token[i] != NULL)
+    printf("  %s  2 ", token[0]);
+
+    /*while (token[i] != NULL)
     {
         if (strcmp(token[i], ";") == 0 | strcmp(token[i], "&") == 0)  //TODO not sure this is sound. Test it.
         {
@@ -89,7 +101,7 @@ int fill_structs(char *token[], JOB *job_queue)
             start = i+1;
         }      
         i++;
-    }
+    }*/
 
     return job_num; //returning num of jobs
 }
@@ -196,19 +208,23 @@ void free_queue(JOB *queue, int job_count)
         //free(queue[i]);
     }
 
+
+
     //printf("QUEUE FREED\n"); //removed for testing readability
 
     return;
 }
 
-void add_sep_spacers(char * commandline)
+void add_sep_spacers(char * commandline, char * formline)
 {
     //char special_chars[] = {';','&','|','<','>'};  //maybe make constant.
 
     char *new_com = malloc(sizeof(char) * strlen(commandline));
     strcpy(new_com, commandline);
+    char *temp_com = malloc(sizeof(char) * 3 * strlen(new_com));
 
-    memset(commandline, 0, sizeof(commandline));
+    //memset(commandline, 0, sizeof(commandline));
+    commandline = NULL;
 
     int j = 0;
 
@@ -219,29 +235,40 @@ void add_sep_spacers(char * commandline)
         {
             if (i != 0 && new_com[i-1] != ' ')  //if already has space on left, ignore. else add space
             {
-                commandline[j] = ' ';
+                temp_com[j] = ' ';
                 j++;
             }
 
-            commandline[j] = new_com[i];
+            temp_com[j] = new_com[i];
             j++;
 
             if (i != strlen(new_com) && new_com[i+1] != ' ')  //if already has space on right, ignore
             {
-                commandline[j] = ' ';
+                temp_com[j] = ' ';
                 j++;
             }
         }
         else  //for all other characters normal copying.
         {
-            commandline[j] = new_com[i];
+            temp_com[j] = new_com[i];
             j++;
         }
     }
 
-    commandline[j] = '\0';
+    temp_com[j] = '\0';
+
+    formline = malloc(sizeof(char) * strlen(temp_com) + 1);
+    strcpy(formline, temp_com);
+    //formline = &n;
 
     free(new_com);
+    free(temp_com);
 
     return;
+}
+
+void free_all(char * commandline, JOB *queue, int job_count)
+{
+    free_queue(queue, job_count);
+    free(commandline);
 }

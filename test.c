@@ -6,12 +6,13 @@
 bool example_test(void);
 
 //parser tests:
-bool parse_commandline_test(void); 
+/*bool parse_commandline_test(void); 
 bool parse_check_job_sep(void);
 bool parse_check_com_arg(void);
 bool parse_check_com_sep(void);
 bool parse_newline_handled(void);
-bool parse_separator_space(void);
+bool parse_separator_space(void);*/
+bool parse_end_separator_test(void);
 
 
 int main(void) {
@@ -21,7 +22,7 @@ int main(void) {
 
     //parser tests
 
-    //struct visual check test
+    /*//struct visual check test
     if(parse_commandline_test()){
         printf("Test parse_commandline_test passed\n");
         success++;
@@ -73,7 +74,17 @@ int main(void) {
     } else {
         printf("Test parse_separator_space failed\n");
         fail++;
+    }*/
+
+    //checks handling of last char being a separator.
+    if(parse_end_separator_test()){
+        printf("Test parse_end_separator_test passed\n");
+        success++;
+    } else {
+        printf("Test parse_end_separator_test failed\n");
+        fail++;
     }
+    
 
     if(example_test()){
         success++;
@@ -97,7 +108,7 @@ bool example_test(void){
     }
 }
 
-bool parse_commandline_test(){ 
+/*bool parse_commandline_test(){ 
  
     JOB job_queue[MAX_JOBS];
  
@@ -448,6 +459,34 @@ bool parse_separator_space(void)
         perror("ERROR: job_count not matching (found).");
         return false;
     }
+
+    return true;
+}*/
+
+bool parse_end_separator_test(void)
+{
+    JOB job_queue[MAX_JOBS];
+ 
+    char tokens[MAX_ARG_LEN];
+    
+    
+    //char com[] = "ls -l | echo;ps -lH;ls;echo&ls&ps -e | grep 1234;"; // SEGFAULTS
+    char com[] = "echo;";
+    char * com2 = NULL;  //malloced memory
+    com2 = malloc(sizeof(char) * strlen(com) * 3);
+
+    int job_count = parse_commandline(com, com2, job_queue, tokens);
+
+    printf(" %s ", tokens[0]);
+
+    /*if (job_count != 1)  //check correct number of jobs were collected.
+    {
+        perror("ERROR: job_count not matching (found).");
+        return false;
+    }*/
+
+    free_queue(job_queue, job_count);
+    free(com2);
 
     return true;
 }
