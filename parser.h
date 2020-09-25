@@ -19,26 +19,114 @@
 //static const char white_space[2] = { (char) 0x20, (char) 0x09 };
 static const char white_space[3] = { (char) 0x20, (char) 0x09, (char) 0x00 };
 
-/*The Structure we create for the commands.*/
+/**
+ * The Structure we create for the commands.
+ * com_name : pointer to command name.
+ * argv : pointer to array of command arguments.
+ * background : command to be run in background.
+ * redirect_in : pointer to file redirection character next arg is file name.
+ * redirect_out : pointer to file redirection character next arg is file name.
+ * pipe_to : command array index to pipe output to.
+ */
 typedef struct Command_struct
 {
-   char *com_name;
-   char **argv;
+   char * com_name; 
+   char ** argv;
    int background;
-   char *redirect_in;
-   char *redirect_out;
+   char * redirect_in;
+   char * redirect_out;
    int pipe_to;
 }
 command;
 
+/*
+ * This function processes the command line. It isolates tokens seperated by
+ * the '&' or the '|' character. The tokens are then passed on to be processed
+ * by other functions. Once the first token has been isolated this function is
+ * called recursivly to process the rest of the command line. Once the entire
+ * command line has been processed an array of command structures is created
+ * and returned.
+ *
+ * Arguments :
+ *      cmd - the command line to be processed.
+ *
+ * Returns : 
+ *      An array of pointers to command structures.
+ *
+ */
+command ** process_cmd_line(char *cmd, int first);
 
-/* Function prototypes added by Nick Nelissen 11/9/2001 */
-command ** process_cmd_line(char *cmd,int);
+/*
+ * This function parses the commands isolated from the command line string in
+ * other functions. It searches the string looking for input and output
+ * redirection characters. The simple commands found are sent to
+ * process_simple_comd(). The redirection information is stored in the result
+ * command structure.
+ *
+ * Arguments :
+ *      cmd - the command string to be processed.
+ *      result - the command structure to store the results in.
+ *
+ * Returns :
+ *      None.
+ *
+ */
 void process_cmd(char *cmd, command * result);
+
+/*
+ * This function breakes the simple command token isolated in other functions
+ * into a sequence of arguments. Each argument is bounded by white-spaces, and
+ * there is no special character intepretation. The results are stored in the
+ * argv array of the result command structure.
+ * 
+ * Arguments :
+ *      cmd - the string to be processed.
+ *      result - the comand struct to store the results in.
+ *
+ * Returns :
+ *      None.
+ *
+ */
 void process_simple_cmd(char *cmd, command * result);
+
+/*
+ * This function cleans up some of the dynamicly allocated memory. Each array
+ * element is visited, and the contained data is free'd before the entire
+ * structure is free'd.
+ *
+ * Arguments :
+ *      cmd - the array of pointers to command structures to be cleaned.
+ *
+ * Returns :
+ *      None.
+ *
+ */
 void clean_up(command ** cmd);
-void clean_up(command ** cmd);
-void clean_up(command ** cmd);
+
+/*
+ * This function dumps the contents of the structure to stdout.
+ *
+ * Arguments :
+ *      c - the structure to be displayed.
+ *      count - the array position of the structure.
+ *
+ * Returns :
+ *      None.
+ *
+ */
 void dump_structure(command * c, int count);
+
+/*
+ * This function dumps the contents of the structure to stdout in a human
+ * readable format..
+ *
+ * Arguments :
+ *      c - the structure to be displayed.
+ *      count - the array position of the structure.
+ *
+ * Returns :
+ *      None.
+ *
+ */
 void print_human_readable(command * c, int count);
 #endif
