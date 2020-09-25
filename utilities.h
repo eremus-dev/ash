@@ -14,7 +14,5 @@ void change_prompt(char * new_string);
 // function to change the current working directory.
 void change_pwd(char * path);
 
-// Closes all the shells associated resources and exits.
-void exit();
 
 #endif
