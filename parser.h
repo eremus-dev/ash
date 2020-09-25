@@ -24,10 +24,10 @@ typedef struct Command_struct
 {
    char *com_name;
    char **argv;
-   int background;
+   int background;  //1 if & present, 0 if not.
    char *redirect_in;
    char *redirect_out;
-   int pipe_to;
+   int pipe_to;  //index to command array element.
 }
 command;
 
