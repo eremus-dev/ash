@@ -1,100 +1,44 @@
+#ifndef _PARSER_H
+#define _PARSER_H
+
 /*
-Header file for the Job and Command Parser.
-
-Returns a JOB queue of job structs for the ashell to execute.
-*/
-#ifndef PARSER_H
-#define PARSER_H
-
-#include "ashell_const.h"
-#include <stddef.h> //for NULL
-#include <string.h> //for strtok()
+ * Parser.h
+ * Data structures and various defines for parser.c
+ * Author : Michael Roberts <mroberts@it.net.au>
+ * Last Update : 15/07/01
+ */
 #include <stdio.h>
-#include <stdlib.h> //for malloc()
+#include <stdlib.h>
+#include <string.h>
 
-#define jobseparators ";&\n"
-#define commandseparators "<>|"
-#define argumentseparators " \n"
+/*The length of the command line.*/
+#define CMD_LENGTH 256
+
+/*Whitespaces that are searched for*/
+// nick modified this
+//static const char white_space[2] = { (char) 0x20, (char) 0x09 };
+static const char white_space[3] = { (char) 0x20, (char) 0x09, (char) 0x00 };
+
+/*The Structure we create for the commands.*/
+typedef struct Command_struct
+{
+   char *com_name;
+   char **argv;
+   int background;
+   char *redirect_in;
+   char *redirect_out;
+   int pipe_to;
+}
+command;
 
 
-/**
- *  The struct to store the context associated with a command.
- *  
- */
-typedef struct Commands {
-    //char * commands[MAX_COMMAND_LEN]; // points to token in commandline ashell.c:commandline:6
-    int first; //index of first command arg in token array
-    int last; //index of last command arg in token array
-    char * in_sep; // points to special in_sep condition, eg. < or | (NULL if no condition)
-    char * out_sep; // points to special out_sep condition
-} Command;
-
-/**
- * The struct to store the command queue that composes a job and the context of the job.
- */
-typedef struct Jobs {
-    // pointers to command structs commandline in ashell.c:commandline:6 
-    // to be dynamically allocated by parsers and free'd from ashell exec_command
-    // 
-    Command *command_queue[MAX_COMMAND_LEN]; //array of command structs, remember to free()
-    int command_count; //number of command structs in command_queue.
-    int sep; //index of separator in token array for this job (& or ;). 
-} JOB;
-
-/**
- * Function to parse the string received from the commandline.
- * returns number of Jobs in commandline.
- */
-int parse_commandline(char * commandline, JOB * job_queue, char * tokens[]);
-
-/**
- * Function to free memory allocated in Job queue in the event of bad grammar
- */
-void abort_parsing(int job_count, JOB * queue);
-
-/**
- * Function to terminate commandline with ';' if not already terminated
- */
-void terminate_command(char line[]);
-
-/**
- * Function to separate a string into an array of tokens.
- */
-int tokenise (char line[], char *token[]);
-
-/**
- * Function that splits tokens into jobs, to be assigned to JOB structs.
- */
-int fill_structs(char *token[], JOB *job_queue);
-
-/**
- * Function that fills out a job struct, creating and saving its command structs.
- */
-void build_job_struct(JOB *job, char *token[], int start, int end, int sep);
-
-/**
- * Function that assigns command information to command struct.
- */
-void build_command_struct(Command *com, char *token[], int start, int end, int sep, int last_sep); 
-
-/**
- * Function that prints all information about a job queue. (for troublshooting).
- */
-void print_jobs(JOB * queue, int num_jobs, char * token[]);
-
-/**
- * Function that prints all tokens in a token array. (for troubleshooting).
- */
-void print_tokens(char *token[]);
-
-/**
- * Function that frees all malloced memory in job queue.
- */
-void free_queue(JOB *queue, int job_count);
-
-/**
- * Function that adds space characters between each of the special separator characters ';','&','|','<','>'.
- */
-void add_sep_spacers(char * commandline);
-
+/* Function prototypes added by Nick Nelissen 11/9/2001 */
+command ** process_cmd_line(char *cmd,int);
+void process_cmd(char *cmd, command * result);
+void process_simple_cmd(char *cmd, command * result);
+void clean_up(command ** cmd);
+void clean_up(command ** cmd);
+void clean_up(command ** cmd);
+void dump_structure(command * c, int count);
+void print_human_readable(command * c, int count);
 #endif
