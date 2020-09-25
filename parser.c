@@ -23,10 +23,9 @@
  *      None.
  *
  */
-void
-process_simple_cmd(char *cmd, command * result)
+void process_simple_cmd(char *cmd, command * result)
 {
-   char *dc;
+   char *dc; 
    int lpc = 1;
 #ifdef DEBUG
    fprintf(stderr,"process_simple_cmd\n");
