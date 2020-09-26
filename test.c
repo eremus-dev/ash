@@ -10,6 +10,7 @@ bool parser_test(void);
 bool parser_semicol_and_amp_test(void);
 bool parser_pipe_test(void);
 bool parser_spacing_test(void);
+bool parser_double_sep_test(void);
 
 
 
@@ -70,6 +71,18 @@ int main(void)
         fail++;
     }
 
+    //multiple spaces no effect test
+    if (parser_double_sep_test())
+    {
+        printf("function parser_double_sep_test() passed.\n");
+        success++;
+    }
+    else
+    {
+        printf("function parser_double_sep_test() failed.\n");
+        fail++;
+    }
+
 
 
 
@@ -104,14 +117,15 @@ bool example_test(void)
 
 bool parser_test(void)
 {
-    /*char *newline_p;  //points to and replaces \n with \0.
+    /*
+    char *newline_p;  //points to and replaces \n with \0.
     command **com_queue;  //array of pointers to command structs.
     char *commandline;  //holds commandline input.
 
     commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
     
     //line = fgets(line, MAX_COMMAND_LEN, stdin);
-    char *temp_line = "ls | ps | echo\n";  //newline required.
+    char *temp_line = "ls ; ; ls\n";  //newline required.
     strcpy(commandline, temp_line);
 
     newline_p = index(commandline, '\n');
@@ -272,5 +286,43 @@ bool parser_spacing_test(void)
     clean_up(com_queue);  //free com_queue
     free(commandline);  //free commandline
 
+    return true;
+}
+
+bool parser_double_sep_test(void)
+{
+    char *com1 = "ls ;; ls";
+    char *com2 = "ls ; ; ls";
+    char *com3 = "ls ;     ; ls";
+    char *com4 = "ls;;ls";
+    char *com5 = "ls;ls;";
+
+
+    if(!check_double_sep(com1))
+    {
+        perror("ERROR: bad sep pair not foud in com1\n");
+        return false;
+    }
+    if(!check_double_sep(com2))
+    {
+        perror("ERROR: bad sep pair not foud in com2\n");
+        return false;
+    }
+    if(!check_double_sep(com3))
+    {
+        perror("ERROR: bad sep pair not foud in com3\n");
+        return false;
+    }
+    if(!check_double_sep(com4))
+    {
+        perror("ERROR: bad sep pair not foud in com4\n");
+        return false;
+    }
+    if(!check_double_sep(com5))
+    {
+        perror("ERROR: bad sep pair not foud in com5\n");
+        return false;
+    }
+    
     return true;
 }

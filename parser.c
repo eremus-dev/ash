@@ -175,6 +175,8 @@ command ** process_cmd_line(char *cmd,int new)
     * Otherwise process accordingly.
     */
 
+   //NEW CODE
+
    if ((rc = index(cmd, '&')) != NULL)  //is there a '&' in the line
    {
       rc = strtok(cmd, "&");
@@ -280,7 +282,7 @@ command ** process_cmd_line(char *cmd,int new)
    
 
 
-   //end mine
+   //OLD CODE
 
    /*if ((rc = index(cmd, '&')) == NULL) 
    {
@@ -480,3 +482,34 @@ print_human_readable(command * c, int count)
    return;
 }                       /*End of print_human_readable() */
 
+bool check_double_sep(char *line)
+{
+   int i = 0;
+   int j;
+   while (line[i] != '\0')
+   {
+      j = i + 1;
+      if (line[i] == '|' || line[i] == '&' || line[i] == ';' || line[i] == '<' || line[i] == '>')
+      {
+         while (line[j] != '|' && line[j] != '&' && line[j] != ';' && line[j] != '<' && line[j] != '>' && line[j] != '\0')
+         {
+            if (line[j] == ' ')
+            {
+               j++;
+            }
+            else if (line[i] == '|' || line[i] == '&' || line[i] == ';' || line[i] == '<' || line[i] == '>')
+            {
+               return true;
+            }
+            else
+            {
+               break;
+            }
+            
+         }
+      }
+      i++;
+   }
+
+   return false;
+}
