@@ -107,5 +107,30 @@ bool parser_test(void)
 
 bool parser_semicolon_test(void)
 {
-    return false;
+    char *newline_p;  //points to and replaces \n with \0.
+    command **com_queue;  //array of pointers to command structs.
+    char *commandline;  //holds commandline input.
+
+    commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
+    
+    //line = fgets(line, MAX_COMMAND_LEN, stdin);
+    char *temp_line = "ls -l;ps&\n";  //newline required.
+    strcpy(commandline, temp_line);
+
+    newline_p = index(commandline, '\n');
+    *newline_p = '\0';  //replace '\n' with '\0'
+
+    com_queue = process_cmd_line(commandline, 1);
+
+    int i = 0;
+    while (com_queue[i] != NULL) {
+        dump_structure(com_queue[i], i);  //print command structs
+        //print_human_readable(com_queue[i], i);
+        i++;
+    }
+
+    clean_up(com_queue);  //free com_queue
+    free(commandline);  //free commandline
+
+    return true;
 }

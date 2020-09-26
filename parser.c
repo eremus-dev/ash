@@ -152,7 +152,7 @@ process_cmd(char *cmd, command * result)
  */
 command ** process_cmd_line(char *cmd,int new)
 {
-   char *rc, *mc;
+   char *rc, *mc, *mc2;
    char *rc_copy = NULL;
    static command **cmd_line;
    static int lc;
@@ -172,7 +172,111 @@ command ** process_cmd_line(char *cmd,int new)
     * Otherwise process accordingly.
     */
 
-   if ((rc = index(cmd, '&')) == NULL) 
+   if ((rc = index(cmd, '&')) != NULL)  //is there a '&' in the line
+   {
+      rc = strtok(cmd, "&");
+      rc_copy = strdup(rc);	/*Make a copy of the first token */
+      rc = strtok(NULL, "");	/*Get the second token out */
+      if ((mc = index(rc_copy, '|')) != NULL || (mc2 = index(rc_copy, ';')) != NULL) 
+      {
+         process_cmd_line(rc_copy,0);
+      }
+      else 
+      {
+         cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
+         // nick changed this
+	      //cmd_line[lc] = malloc(sizeof(command));
+	      cmd_line[lc] = calloc(1,sizeof(command));
+
+         process_cmd(cmd, cmd_line[lc]);
+         cmd_line[lc]->background = 1;
+         lc++;
+      }
+      if (rc != NULL)
+      {
+         process_cmd_line(rc,0);	/*Process the Second Token */
+      }
+   }
+   else if ((rc = index(cmd, '|')) != NULL) //is there a '|' in the line
+   {
+      rc = strtok(cmd, "|");
+      rc_copy = strdup(rc);	/*Make a copy of the first token */
+      rc = strtok(NULL, "");	/*Get the second token out */
+
+      if ((mc = index(rc_copy, ';')) != NULL) 
+      {
+         process_cmd_line(rc_copy,0);
+      }
+      else
+      {
+         cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
+         // nick changed this, same as nulling each element
+         //cmd_line[lc] = malloc(sizeof(command));
+         cmd_line[lc] = calloc(1,sizeof(command));
+
+         process_cmd(cmd, cmd_line[lc]);
+         cmd_line[lc]->pipe_to = lc + 1;
+         lc++;
+      }      
+      if (rc != NULL)
+      {
+         process_cmd_line(rc,0);	/*Process the Second Token */
+      }
+   }
+   else if ((rc = index(cmd, ';')) != NULL)  //is there a ';' in the line
+   {
+      rc = strtok(cmd, ";");
+      //rc_copy = strdup(rc);	/*Make a copy of the first token */
+      rc = strtok(NULL, "");	/*Get the second token out */
+      
+      cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
+      // nick changed this
+      //cmd_line[lc] = malloc(sizeof(command));
+      cmd_line[lc] = calloc(1,sizeof(command));
+
+      process_cmd(cmd, cmd_line[lc]);
+      cmd_line[lc]->background = 0;
+      lc++;
+      
+      if (rc != NULL)
+      {
+         process_cmd_line(rc,0);	/*Process the Second Token */
+      }
+   }
+   else  //if no '&',';','|' are in line
+   {
+      //cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
+      cmd_line = realloc(cmd_line, (lc + 1) * sizeof(command *));
+      
+      if(cmd_line==NULL)
+      {
+         exit(-1);
+      }
+
+      cmd_line[lc] = malloc(sizeof(command));
+      if(cmd_line[lc]==NULL)
+      {
+         exit(-1);
+      }
+      // nick added this to NULL the new struct
+      cmd_line[lc]->argv=NULL;
+      cmd_line[lc]->redirect_in=NULL;
+      cmd_line[lc]->redirect_out=NULL;
+      cmd_line[lc]->com_name=NULL;
+      cmd_line[lc]->pipe_to=0;
+      cmd_line[lc]->background=0;	 
+
+
+      process_cmd(cmd, cmd_line[lc]);
+
+      lc++;
+   }
+   
+
+
+   //end mine
+
+   /*if ((rc = index(cmd, '&')) == NULL) 
    {
       if ((rc = index(cmd, '|')) == NULL) 
       {
@@ -203,9 +307,9 @@ command ** process_cmd_line(char *cmd,int new)
          lc++;
       }
       else 
-      {            /*A '|' was found */
+      {            //A '|' was found 
          rc = strtok(cmd, "|");
-         rc = strtok(NULL, "");	/*Get the second token out */
+         rc = strtok(NULL, "");	//Get the second token out 
 
          cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
 	      // nick changed this, same as nulling each element
@@ -217,15 +321,15 @@ command ** process_cmd_line(char *cmd,int new)
          lc++;
          if (rc != NULL)
          {
-            process_cmd_line(rc,0);	/*Process the Second Token */
+            process_cmd_line(rc,0);	//Process the Second Token 
          }
       }
    }
    else 
-   {               /*A '&' was found */
+   {               //A '&' was found
       rc = strtok(cmd, "&");
-      rc_copy = strdup(rc);	/*Make a copy of the first token */
-      rc = strtok(NULL, "");	/*Get the second token out */
+      rc_copy = strdup(rc);	//Make a copy of the first token 
+      rc = strtok(NULL, "");	//Get the second token out
       if ((mc = index(rc_copy, '|')) != NULL) 
       {
          process_cmd_line(rc_copy,0);
@@ -243,10 +347,10 @@ command ** process_cmd_line(char *cmd,int new)
       }
       if (rc != NULL)
       {
-         process_cmd_line(rc,0);	/*Process the Second Token */
+         process_cmd_line(rc,0);	//Process the Second Token
       }
 
-   }
+   }*/
 
    cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
    cmd_line[lc] = NULL;
