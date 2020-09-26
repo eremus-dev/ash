@@ -17,6 +17,14 @@ void exec_shell() {
         newline_p = index(commandline, '\n');
         *newline_p = '\0';  //replace '\n' with '\0'
 
+        //checks if invalid separator pair, frees commandline, moves to next loop.
+        if(check_double_sep(commandline))
+        {
+            perror("ERROR: invalid pair of separators\n");
+            free(commandline);
+            continue;
+        }
+
         com_queue = process_cmd_line(commandline, 1);
 
         int com_count = 0;

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "ashell_const.h"
 
 /*The length of the command line.*/
@@ -130,5 +131,12 @@ void dump_structure(command * c, int count);
  *
  */
 void print_human_readable(command * c, int count);
+
+/**
+ * Checks if two separators are adjecent or separated by only whitespaces. 
+ * newline char needs to be replaced with '\0' before call.
+ * returns true if an invlaid separator pair is found, and false otherwise.
+ */
+bool check_double_sep(char *line);
 
 #endif
