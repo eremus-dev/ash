@@ -114,7 +114,7 @@ bool parser_semicolon_test(void)
     commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
     
     //line = fgets(line, MAX_COMMAND_LEN, stdin);
-    char *temp_line = "ls -l;ps&\n";  //newline required.
+    char *temp_line = "ls -l|ps&\n";  //newline required.
     strcpy(commandline, temp_line);
 
     newline_p = index(commandline, '\n');

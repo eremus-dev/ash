@@ -152,10 +152,10 @@ process_cmd(char *cmd, command * result)
  */
 command ** process_cmd_line(char *cmd,int new)
 {
-   char *rc, *mc, *mc2;
-   char *rc_copy = NULL;
-   static command **cmd_line;
-   static int lc;
+   char *rc, *mc, *mc2;  //token value holders
+   char *rc_copy = NULL;  //for temporary token holder copying
+   static command **cmd_line;  //command struct
+   static int lc;  //index in the command array
 
    // nick nelissen added this 23/9/01
    // ensures statics are null, when not recursively called 
@@ -175,8 +175,8 @@ command ** process_cmd_line(char *cmd,int new)
    if ((rc = index(cmd, '&')) != NULL)  //is there a '&' in the line
    {
       rc = strtok(cmd, "&");
-      rc_copy = strdup(rc);	/*Make a copy of the first token */
-      rc = strtok(NULL, "");	/*Get the second token out */
+      rc_copy = strdup(rc);	//Make a copy of the first token 
+      rc = strtok(NULL, "");	//Get the second token out 
       if ((mc = index(rc_copy, '|')) != NULL || (mc2 = index(rc_copy, ';')) != NULL) 
       {
          process_cmd_line(rc_copy,0);
@@ -194,14 +194,14 @@ command ** process_cmd_line(char *cmd,int new)
       }
       if (rc != NULL)
       {
-         process_cmd_line(rc,0);	/*Process the Second Token */
+         process_cmd_line(rc,0);	//Process the Second Token
       }
    }
    else if ((rc = index(cmd, '|')) != NULL) //is there a '|' in the line
    {
       rc = strtok(cmd, "|");
-      rc_copy = strdup(rc);	/*Make a copy of the first token */
-      rc = strtok(NULL, "");	/*Get the second token out */
+      rc_copy = strdup(rc);	//Make a copy of the first token
+      rc = strtok(NULL, "");	//Get the second token out
 
       if ((mc = index(rc_copy, ';')) != NULL) 
       {
@@ -220,14 +220,14 @@ command ** process_cmd_line(char *cmd,int new)
       }      
       if (rc != NULL)
       {
-         process_cmd_line(rc,0);	/*Process the Second Token */
+         process_cmd_line(rc,0);	//Process the Second Token
       }
    }
    else if ((rc = index(cmd, ';')) != NULL)  //is there a ';' in the line
    {
       rc = strtok(cmd, ";");
-      //rc_copy = strdup(rc);	/*Make a copy of the first token */
-      rc = strtok(NULL, "");	/*Get the second token out */
+      //rc_copy = strdup(rc);	//Make a copy of the first token
+      rc = strtok(NULL, "");	//Get the second token out
       
       cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
       // nick changed this
@@ -235,12 +235,12 @@ command ** process_cmd_line(char *cmd,int new)
       cmd_line[lc] = calloc(1,sizeof(command));
 
       process_cmd(cmd, cmd_line[lc]);
-      cmd_line[lc]->background = 0;
+      //cmd_line[lc]->background = 0;
       lc++;
       
       if (rc != NULL)
       {
-         process_cmd_line(rc,0);	/*Process the Second Token */
+         process_cmd_line(rc,0);	//Process the Second Token 
       }
    }
    else  //if no '&',';','|' are in line
