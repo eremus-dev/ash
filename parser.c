@@ -93,20 +93,22 @@ void process_simple_cmd(char *cmd, command * result)
  *      None.
  *
  */
-void
-process_cmd(char *cmd, command * result)
+void process_cmd(char *cmd, command * result)
 {
-   char *pc, *mc;
+   char *pc, *mc;  //pointers to the matched character of index.
    char *simple_cmd = NULL;
 
    /*If no redirection found, then only a simple command present. */
-   if ((pc = index(cmd, '<')) == NULL) {
-      if ((pc = index(cmd, '>')) == NULL) {
+   if ((pc = index(cmd, '<')) == NULL) 
+   {
+      if ((pc = index(cmd, '>')) == NULL) 
+      {
          process_simple_cmd(cmd, result);
          result->redirect_in = NULL;
          result->redirect_out = NULL;
       }
-      else {            /*Output Redirection in place */
+      else 
+      {            /*Output Redirection in place */
          pc = strtok(cmd, ">");
          simple_cmd = strdup(pc);
 
@@ -115,7 +117,8 @@ process_cmd(char *cmd, command * result)
          result->redirect_out = strdup(pc);
       }
    }
-   else {               /*Input Redirection */
+   else 
+   {               /*Input Redirection */
       pc = strtok(cmd, "<");
       simple_cmd = strdup(pc);
       pc = strtok(NULL, "\0");
@@ -150,19 +153,19 @@ process_cmd(char *cmd, command * result)
  *      An array of pointers to command structures.
  *
  */
-command **
-process_cmd_line(char *cmd,int new)
+command ** process_cmd_line(char *cmd,int new)
 {
-   char *rc, *mc;
-   char *rc_copy = NULL;
-   static command **cmd_line;
-   static int lc;
+   char *rc, *mc, *mc2;  //token value holders
+   char *rc_copy = NULL;  //for temporary token holder copying
+   static command **cmd_line;  //command struct
+   static int lc;  //index in the command array
 
    // nick nelissen added this 23/9/01
    // ensures statics are null, when not recursively called 
-   if(new==1){
-	lc=0;
-	cmd_line=NULL;
+   if(new==1)
+   {
+      lc=0;
+      cmd_line=NULL;
    }
 
 
@@ -172,38 +175,150 @@ process_cmd_line(char *cmd,int new)
     * Otherwise process accordingly.
     */
 
-   if ((rc = index(cmd, '&')) == NULL) {
-      if ((rc = index(cmd, '|')) == NULL) {
+   if ((rc = index(cmd, '&')) != NULL)  //is there a '&' in the line
+   {
+      rc = strtok(cmd, "&");
+      rc_copy = strdup(rc);	//Make a copy of the first token 
+      rc = strtok(NULL, "");	//Get the second token out 
+      if ((mc = index(rc_copy, '|')) != NULL || (mc2 = index(rc_copy, ';')) != NULL) 
+      {
+         process_cmd_line(rc_copy,0);
+         //updates made struct with correct info
+         cmd_line[lc-1]->background = 1;
+      }
+      else 
+      {
+         cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
+         // nick changed this
+	      //cmd_line[lc] = malloc(sizeof(command));
+	      cmd_line[lc] = calloc(1,sizeof(command));
+
+         process_cmd(cmd, cmd_line[lc]);
+         cmd_line[lc]->background = 1;
+         lc++;
+      }
+      if (rc != NULL)
+      {
+         process_cmd_line(rc,0);	//Process the Second Token
+      }
+   }
+   else if ((rc = index(cmd, '|')) != NULL) //is there a '|' in the line
+   {
+      rc = strtok(cmd, "|");
+      rc_copy = strdup(rc);	//Make a copy of the first token
+      rc = strtok(NULL, "");	//Get the second token out
+
+      if ((mc = index(rc_copy, ';')) != NULL) 
+      {
+         process_cmd_line(rc_copy,0);
+         cmd_line[lc-1]->pipe_to = lc;
+      }
+      else
+      {
+         cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
+         // nick changed this, same as nulling each element
+         //cmd_line[lc] = malloc(sizeof(command));
+         cmd_line[lc] = calloc(1,sizeof(command));
+
+         process_cmd(cmd, cmd_line[lc]);
+         cmd_line[lc]->pipe_to = lc + 1;
+         lc++;
+      }      
+      if (rc != NULL)
+      {
+         process_cmd_line(rc,0);	//Process the Second Token
+      }
+   }
+   else if ((rc = index(cmd, ';')) != NULL)  //is there a ';' in the line
+   {
+      rc = strtok(cmd, ";");
+      //rc_copy = strdup(rc);	//Make a copy of the first token
+      rc = strtok(NULL, "");	//Get the second token out
+      
+      cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
+      // nick changed this
+      //cmd_line[lc] = malloc(sizeof(command));
+      cmd_line[lc] = calloc(1,sizeof(command));
+
+      process_cmd(cmd, cmd_line[lc]);
+      cmd_line[lc]->background = 0;
+      lc++;
+      
+      if (rc != NULL)
+      {
+         process_cmd_line(rc,0);	//Process the Second Token 
+      }
+   }
+   else  //if no '&', ';', or '|' are in line
+   {
+      //cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
+      cmd_line = realloc(cmd_line, (lc + 1) * sizeof(command *));
+      
+      if(cmd_line==NULL)
+      {
+         exit(-1);
+      }
+
+      cmd_line[lc] = malloc(sizeof(command));
+      if(cmd_line[lc]==NULL)
+      {
+         exit(-1);
+      }
+      // nick added this to NULL the new struct
+      cmd_line[lc]->argv=NULL;
+      cmd_line[lc]->redirect_in=NULL;
+      cmd_line[lc]->redirect_out=NULL;
+      cmd_line[lc]->com_name=NULL;
+      cmd_line[lc]->pipe_to=0;
+      cmd_line[lc]->background=0;	 
+
+
+      process_cmd(cmd, cmd_line[lc]);
+
+      lc++;
+   }
+   
+
+
+   //end mine
+
+   /*if ((rc = index(cmd, '&')) == NULL) 
+   {
+      if ((rc = index(cmd, '|')) == NULL) 
+      {
          //cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
-	 cmd_line = realloc(cmd_line, (lc + 1) * sizeof(command *));
-		 
-	 if(cmd_line==NULL){
-		exit(-1);
-	 }
+         cmd_line = realloc(cmd_line, (lc + 1) * sizeof(command *));
+         
+         if(cmd_line==NULL)
+         {
+            exit(-1);
+         }
 
          cmd_line[lc] = malloc(sizeof(command));
-         if(cmd_line[lc]==NULL){
-		exit(-1);
-	 }
-	 // nick added this to NULL the new struct
+         if(cmd_line[lc]==NULL)
+         {
+            exit(-1);
+         }
+         // nick added this to NULL the new struct
          cmd_line[lc]->argv=NULL;
-	 cmd_line[lc]->redirect_in=NULL;
-	 cmd_line[lc]->redirect_out=NULL;
+         cmd_line[lc]->redirect_in=NULL;
+         cmd_line[lc]->redirect_out=NULL;
          cmd_line[lc]->com_name=NULL;
          cmd_line[lc]->pipe_to=0;
-	 cmd_line[lc]->background=0;	 
+         cmd_line[lc]->background=0;	 
 
 
          process_cmd(cmd, cmd_line[lc]);
 
          lc++;
       }
-      else {            /*A '|' was found */
+      else 
+      {            //A '|' was found 
          rc = strtok(cmd, "|");
-         rc = strtok(NULL, "");	/*Get the second token out */
+         rc = strtok(NULL, "");	//Get the second token out 
 
          cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
-	 // nick changed this, same as nulling each element
+	      // nick changed this, same as nulling each element
          //cmd_line[lc] = malloc(sizeof(command));
          cmd_line[lc] = calloc(1,sizeof(command));
 
@@ -211,30 +326,37 @@ process_cmd_line(char *cmd,int new)
          cmd_line[lc]->pipe_to = lc + 1;
          lc++;
          if (rc != NULL)
-            process_cmd_line(rc,0);	/*Process the Second Token */
+         {
+            process_cmd_line(rc,0);	//Process the Second Token 
+         }
       }
    }
-   else {               /*A '&' was found */
+   else 
+   {               //A '&' was found
       rc = strtok(cmd, "&");
-      rc_copy = strdup(rc);	/*Make a copy of the first token */
-      rc = strtok(NULL, "");	/*Get the second token out */
-      if ((mc = index(rc_copy, '|')) != NULL) {
+      rc_copy = strdup(rc);	//Make a copy of the first token 
+      rc = strtok(NULL, "");	//Get the second token out
+      if ((mc = index(rc_copy, '|')) != NULL) 
+      {
          process_cmd_line(rc_copy,0);
       }
-      else {
+      else 
+      {
          cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
          // nick changed this
-	 //cmd_line[lc] = malloc(sizeof(command));
-	 cmd_line[lc] = calloc(1,sizeof(command));
+	      //cmd_line[lc] = malloc(sizeof(command));
+	      cmd_line[lc] = calloc(1,sizeof(command));
 
          process_cmd(cmd, cmd_line[lc]);
          cmd_line[lc]->background = 1;
          lc++;
       }
       if (rc != NULL)
-         process_cmd_line(rc,0);	/*Process the Second Token */
+      {
+         process_cmd_line(rc,0);	//Process the Second Token
+      }
 
-   }
+   }*/
 
    cmd_line = realloc((void *) cmd_line, (lc + 1) * sizeof(command *));
    cmd_line[lc] = NULL;
@@ -262,7 +384,8 @@ clean_up(command ** cmd)
    int lpc = 0;
    int ilpc = 0;
 
-   while (cmd[lpc] != NULL) {
+   while (cmd[lpc] != NULL) 
+   {
       ilpc = 0;
       if (cmd[lpc]->com_name != NULL)
          free(cmd[lpc]->com_name);	/*Free Com_Name */
@@ -356,5 +479,4 @@ print_human_readable(command * c, int count)
 
    return;
 }                       /*End of print_human_readable() */
-
 

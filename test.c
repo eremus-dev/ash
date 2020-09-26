@@ -6,448 +6,271 @@
 bool example_test(void);
 
 //parser tests:
-bool parse_commandline_test(void); 
-bool parse_check_job_sep(void);
-bool parse_check_com_arg(void);
-bool parse_check_com_sep(void);
-bool parse_newline_handled(void);
-bool parse_separator_space(void);
+bool parser_test(void);
+bool parser_semicol_and_amp_test(void);
+bool parser_pipe_test(void);
+bool parser_spacing_test(void);
 
 
-int main(void) {
-        
+
+int main(void) 
+{  
     int fail = 0;
     int success = 0;
 
+    
+
     //parser tests
 
-    //struct visual check test
-    if(parse_commandline_test()){
-        printf("Test parse_commandline_test passed\n");
+    //general parser testing test
+    if (parser_test())
+    {
+        printf("function parser_test() passed.\n");
         success++;
-    } else {
-        printf("Test parse_commandline_test failed\n");
-        fail++;
     }
-    
-    //job structs separator test
-    if(parse_check_job_sep()){
-        printf("Test parse_check_job_sep passed\n");
-        success++;
-    } else {
-        printf("Test parse_check_job_sep failed\n");
+    else
+    {
+        printf("function parser_test() failed.\n");
         fail++;
     }
 
-    //command arg match test
-    if(parse_check_com_arg()){
-        printf("Test parse_check_com_arg passed\n");
+    //';' and '&' separator recognition test
+    if (parser_semicol_and_amp_test())
+    {
+        printf("function parser_semicol_and_amp_test() passed.\n");
         success++;
-    } else {
-        printf("Test parse_check_com_arg failed\n");
+    }
+    else
+    {
+        printf("function parser_semicol_and_amp_test() failed.\n");
         fail++;
     }
 
-    //command sep match test
-    if(parse_check_com_sep()){
-        printf("Test parse_check_com_sep passed\n");
+    //'|' separator recognition test
+    if (parser_pipe_test())
+    {
+        printf("function parser_pipe_test() passed.\n");
         success++;
-    } else {
-        printf("Test parse_check_com_sep failed\n");
+    }
+    else
+    {
+        printf("function parser_pipe_test() failed.\n");
         fail++;
     }
 
-    //newline removed test
-    if(parse_newline_handled()){
-        printf("Test parse_newline_handled passed\n");
+    //multiple spaces no effect test
+    if (parser_spacing_test())
+    {
+        printf("function parser_spacing_test() passed.\n");
         success++;
-    } else {
-        printf("Test parse_newline_handled failed\n");
+    }
+    else
+    {
+        printf("function parser_spacing_test() failed.\n");
         fail++;
     }
 
-    //spaced separators before tokenised test
-    if(parse_separator_space()){
-        printf("Test parse_separator_space passed\n");
+
+
+
+    //Example test
+    if (example_test())
+    {
+        printf("function example_test() passed.\n");
         success++;
-    } else {
-        printf("Test parse_separator_space failed\n");
+    }
+    else
+    {
+        printf("function example_test() failed.\n");
         fail++;
     }
 
-    if(example_test()){
-        success++;
-    } else {
-        fail++;
-    }
-
-    printf("Test passed %d\nTest failed %d\n", success, fail);
-
-    return 0;
+    printf("PASSES: %d, FAILS: %d\n", success, fail);
 }
 
-bool example_test(void){
-
-    if(true){
-        printf("Test example_test: test passed\n");
+bool example_test(void)
+{
+    if(true)
+    {
+        //printf("Test example_test: test passed\n");
         return true;
-    } else {
-        printf("Test example_test: test_failed\n");
+    } 
+    else 
+    {
+        //printf("Test example_test: test_failed\n");
         return false;
     }
 }
 
-bool parse_commandline_test(){ 
- 
-    JOB job_queue[MAX_JOBS];
- 
-    char * tokens[MAX_ARG_LEN];
-    
-    // Should all give the same results.
-    //char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234 ;"; // PASSES
-    //char com[] = "ls -l | echo ; ps -lH ; ls ; echo & ls & ps -e | grep 1234"; // PASSES
-    char com[] = "ls -l | echo; ps -lH; ls; echo & ls & ps -e | grep 1234;"; // PASSES
-    //char com[] = "ls -l | echo;ps -lH;ls;echo&ls&ps -e | grep 1234;"; // SEGFAULTS
-    //char com[] = "ls -l|echo;ps -lH;ls;echo&ls&ps -e|grep 1234;"; // SEGFAULTS
-    //char com[] = "ls -l | echo; ps -lH; ls; echo& ls& ps -e | grep 1234;"; // SEGFAULTS
-    //char com[] = "ls -l | echo; ps -lH; ls; echo& ls& ps -e | grep 1234"; // SEGFAULTS
-
-    int job_count = parse_commandline(com, job_queue, tokens);
-
-    // TEST for "ls -l | echo ;"
-    if (strcmp(tokens[job_queue[0].command_queue[0]->first + 0], "ls") != 0) 
-    {
-        perror("ERROR: Job 0 - Command 0 - Token 0");
-        return false;
-    }
-
-    if (strcmp(tokens[job_queue[0].command_queue[0]->first + 1], "-l") != 0) 
-    {
-        perror("ERROR: Job 0 - Command 0 - Token 1");
-        return false;
-    }
-
-    if (strcmp(job_queue[0].command_queue[0]->out_sep, "|") != 0) 
-    {
-        perror("ERROR: Job 0 - Command 0 - out_sep");
-        return false;
-    }
-
-    if (strcmp(tokens[job_queue[0].command_queue[1]->first], "echo") != 0) 
-    {
-        perror("ERROR: Job 0 - Command 1 - Token 0");
-        return false;
-    }
-
-    if (strcmp(job_queue[0].command_queue[1]->in_sep, "|") != 0) 
-    {
-        perror("ERROR: Job 0 - Command 1 - in_sep");
-        return false;
-    }
-
-    if (strcmp(tokens[job_queue[0].sep], ";") != 0) 
-    {
-        perror("ERROR: Job 0 - sep");
-        return false;
-    }
-
-    // TEST for "ps -lH ;"
-    if (strcmp(tokens[job_queue[1].command_queue[0]->first + 0], "ps") != 0) 
-    {
-        perror("ERROR: Job 1 - Command 0 - Token 0");
-        return false;
-    }
-
-    if (strcmp(tokens[job_queue[1].command_queue[0]->first + 1], "-lH") != 0) 
-    {
-        perror("ERROR: Job 1 - Command 0 - Token 1");
-        return false;
-    }
-    
-    if (strcmp(tokens[job_queue[1].sep], ";") != 0) 
-    {
-        perror("ERROR: Job 1 - Command 0 - sep");
-        return false;
-    }
-
-    // TEST for ls ;
-
-    if (strcmp(tokens[job_queue[2].command_queue[0]->first + 0], "ls") != 0) 
-    {
-        perror("ERROR: Job 2 - Command 0 - Token 0");
-        return false;
-    }
-
-    if (strcmp(tokens[job_queue[2].sep], ";") != 0) 
-    {
-        perror("ERROR: Job 2 - Command 0 - sep");
-        return false;
-    }
-
-    // TEST for  echo ;
-
-    if (strcmp(tokens[job_queue[3].command_queue[0]->first + 0], "echo") != 0) 
-    {
-        perror("ERROR: Job 3 - Command 0 - Token 0");
-        return false;
-    }
-
-    if (strcmp(tokens[job_queue[3].sep], "&") != 0) 
-    {
-        perror("ERROR: Job 3 - Command 0 - sep");
-        return false;
-    }
-
-    // TEST for ls &
-    if (strcmp(tokens[job_queue[4].command_queue[0]->first + 0], "ls") != 0) 
-    {
-        perror("ERROR: Job 4 - Command 0 - Token 0");
-        return false;
-    }
-
-    if (strcmp(tokens[job_queue[4].sep], "&") != 0) 
-    {
-        perror("ERROR: Job 4 - Command 0 - sep");
-        return false;
-    }
-
-    // TEST for ps -e | grep 1234 ;;
-    if (strcmp(tokens[job_queue[5].command_queue[0]->first + 0], "ps") != 0) 
-    {
-        perror("ERROR: Job 5 - Command 0 - Token 0");
-        return false;
-    }
-    
-    if (strcmp(tokens[job_queue[5].command_queue[0]->first + 1], "-e") != 0) 
-    {
-        perror("ERROR: Job 5 - Command 0 - Token 1");
-        return false;
-    }
-
-    if (strcmp(job_queue[5].command_queue[0]->out_sep, "|") != 0) 
-    {
-        perror("ERROR: Job 5 - Command 0 - out_sep");
-        return false;
-    }
-
-    if (strcmp(tokens[job_queue[5].command_queue[1]->first + 0], "grep") != 0) 
-    {
-        perror("ERROR: Job 5 - Command 1 - Token 0");
-        return false;
-    }
-
-    if (strcmp(tokens[job_queue[5].command_queue[1]->first + 1], "1234") != 0) 
-    {
-        perror("ERROR: Job 5 - Command 1 - Token 1");
-        return false;
-    }
-
-    if (strcmp(job_queue[5].command_queue[1]->in_sep, "|") != 0) 
-    {
-        perror("ERROR: Job 5 - Command 1 - in_sep");
-        return false;
-    }
-    
-    if (strcmp(tokens[job_queue[5].sep], ";") != 0) 
-    {
-        perror("ERROR: Job 2 - Command 0 - sep");
-        return false;
-    }
-
-    free_queue(job_queue, job_count);
-    return true;
-
-}
-
-bool parse_check_job_sep(void)
+bool parser_test(void)
 {
-    JOB job_queue[MAX_JOBS];
- 
-    char * tokens[MAX_ARG_LEN];
+    /*char *newline_p;  //points to and replaces \n with \0.
+    command **com_queue;  //array of pointers to command structs.
+    char *commandline;  //holds commandline input.
 
-    //assuming commands and separated are spaced apart, and command is ended with ';'.
-    char com[] = "ls -l ; ps & echo ;";
- 
-    int job_count = parse_commandline(com, job_queue, tokens);
-
-    if (job_count != 3)  //check correct number of jobs were collected.
-    {
-        perror("ERROR: job_count not matching.");
-        return false;
-    }
-    //to do: add check for index out of range error.
-    if (strcmp(tokens[job_queue[0].sep], ";") != 0)  //check that first job has ';' separator.
-    {
-        perror("ERROR: job struct ';' separator not matching");
-        return false;
-    }
+    commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
     
-    if (strcmp(tokens[job_queue[1].sep], "&") != 0)  //check that second job has '&' separator.
-    {
-        perror("ERROR: job struct '&' separator not matching");
-        return false;
-    }
-    
-    if (strcmp(tokens[job_queue[2].sep], ";") != 0)  //check that third job has ';' separator.
-    {
-        perror("ERROR: job struct ';' separator not matching");
-        return false;
-    }
-    
-    free_queue(job_queue, job_count);  //free the queue
-    return true;
-}
+    //line = fgets(line, MAX_COMMAND_LEN, stdin);
+    char *temp_line = "ls | ps | echo\n";  //newline required.
+    strcpy(commandline, temp_line);
 
-bool parse_check_com_arg(void)
-{
-    JOB job_queue[MAX_JOBS];
- 
-    char * tokens[MAX_ARG_LEN];
+    newline_p = index(commandline, '\n');
+    *newline_p = '\0';  //replace '\n' with '\0'
 
-    //assuming commands and separated are spaced apart, and command is ended with ';'.
-    char com[] = "ls ; ps -t -a ;";
- 
-    int job_count = parse_commandline(com, job_queue, tokens);
+    com_queue = process_cmd_line(commandline, 1);
 
-    if (job_count != 2)  //check correct number of jobs were collected.
+    int i = 0;
+    while (com_queue[i] != NULL) 
     {
-        perror("ERROR: job_count not matching.");
-        return false;
-    }
-    //to do: add check for index out of range error.
-    if (strcmp(tokens[job_queue[0].command_queue[0]->first], "ls") != 0)  //check that first command is 'ls'.
-    {
-        perror("ERROR: first job first command not matching.");
-        return false;
+        dump_structure(com_queue[i], i);  //print command structs
+        //print_human_readable(com_queue[i], i);
+        i++;
     }
 
-    if (strcmp(tokens[job_queue[1].command_queue[0]->first], "ps") != 0)  //check that first command is 'ps'.
-    {
-        perror("ERROR: second job first command not matching");
-        return false;
-    }
-
-    if (strcmp(tokens[job_queue[1].command_queue[0]->first], "ps") != 0)  //check that second command is '-t'.
-    {
-        perror("ERROR: second job first command not matching");
-        return false;
-    }
-
-    if (strcmp(tokens[job_queue[1].command_queue[0]->first], "ps") != 0)  //check that second command is '-a'.
-    {
-        perror("ERROR: second job second command not matching");
-        return false;
-    }
-    
-    free_queue(job_queue, job_count);  //free the queue
-    return true;
-}
-
-bool parse_check_com_sep(void)
-{
-    JOB job_queue[MAX_JOBS];
- 
-    char * tokens[MAX_ARG_LEN];
-
-    //assuming commands and separated are spaced apart, and command is ended with ';'.
-    char com[] = "ls -l | echo ; ps > file.txt ; echo < file.txt ;";
- 
-    int job_count = parse_commandline(com, job_queue, tokens);
-
-    if (job_count != 3)  //check correct number of jobs were collected.
-    {
-        perror("ERROR: job_count not matching.");
-        return false;
-    }
-    //to do: add check for index out of range error.
-    if (job_queue[0].command_queue[0]->in_sep != NULL)  //check that first command left separator is null.
-    {
-        perror("ERROR: first job first command right separator not matching NULL.");
-        return false;
-    }
-
-    if (strcmp(job_queue[0].command_queue[0]->out_sep, "|") != 0)  //check that first command right separator is '|'.
-    {
-        perror("ERROR: first job first command left separator not matching '|'.");
-        return false;
-    }
-
-    if (strcmp(job_queue[0].command_queue[1]->in_sep, "|") != 0)  //check that second command left separator is '|'.
-    {
-        perror("ERROR: first job second command left separator not matching '|'.");
-        return false;
-    }
-
-    if (job_queue[0].command_queue[1]->out_sep != NULL)  //check that second command right separator is null.
-    {
-        perror("ERROR: first job second command right separator not matching NULL.");
-        return false;
-    }
-
-    if (strcmp(job_queue[1].command_queue[0]->out_sep, ">") != 0)  //check that first command right separator is '>'.
-    {
-        perror("ERROR: second job first command right separator not matching '>'.");
-        return false;
-    }
-
-    if (strcmp(job_queue[1].command_queue[1]->in_sep, ">") != 0)  //check that second command left separator is '>'.
-    {
-        perror("ERROR: second job second command left separator not matching '>'.");
-        return false;
-    }
-
-    if (strcmp(job_queue[2].command_queue[0]->out_sep, "<") != 0)  //check that first command right separator is '<'.
-    {
-        perror("ERROR: third job first command right separator not matching '<'.");
-        return false;
-    }
-
-    if (strcmp(job_queue[2].command_queue[1]->in_sep, "<") != 0)  //check that second command left separator is '<'.
-    {
-        perror("ERROR: third job second command left separator not matching '<'.");
-        return false;
-    }
-    
-    free_queue(job_queue, job_count);  //free the queue
-    return true;
-}
-
-bool parse_newline_handled(void)
-{
-    JOB job_queue[MAX_JOBS];
- 
-    char * tokens[MAX_ARG_LEN];
-
-    //assuming commands and separated are spaced apart, and command is ended with ';'.
-    char com[] = "ls ; ls ;\n";
-
-    int job_count = parse_commandline(com, job_queue, tokens);
-
-    if (job_count != 2)  //check correct number of jobs were collected.
-    {
-        perror("ERROR: job_count not matching.");
-        return false;
-    }
+    clean_up(com_queue);  //free com_queue
+    free(commandline);  //free commandline*/
 
     return true;
 }
 
-bool parse_separator_space(void)
+bool parser_semicol_and_amp_test(void)
 {
-    JOB job_queue[MAX_JOBS];
- 
-    char * tokens[MAX_ARG_LEN];
+    char *newline_p;  //points to and replaces \n with \0.
+    command **com_queue;  //array of pointers to command structs.
+    char *commandline;  //holds commandline input.
 
-    //assuming commands and separated are spaced apart, and command is ended with ';'.
-    char com[] = "ls; ls&ls ;ls ;\n";
+    commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
+    
+    //line = fgets(line, MAX_COMMAND_LEN, stdin);
+    char *temp_line = "ls -l; ls & echo; ps&\n";  //newline required.
+    strcpy(commandline, temp_line);
 
-    int job_count = parse_commandline(com, job_queue, tokens);
+    newline_p = index(commandline, '\n');
+    *newline_p = '\0';  //replace '\n' with '\0'
 
-    if (job_count != 4)  //check correct number of jobs were collected.
+    com_queue = process_cmd_line(commandline, 1);
+
+    int com_count = 0;
+    while (com_queue[com_count] != NULL) 
     {
-        perror("ERROR: job_count not matching (found).");
+        com_count++;
+    }
+
+    if (com_count != 4)
+    {
+        perror("ERROR: num of commands not matching\n");
         return false;
     }
+    if (com_queue[0]->background != 0)
+    {
+        perror("ERROR: first command non matching background\n");
+        return false;
+    }
+    if (com_queue[1]->background != 1)
+    {
+        perror("ERROR: second command non matching background\n");
+        return false;
+    }
+    if (com_queue[2]->background != 0)
+    {
+        perror("ERROR: third command non matching background\n");
+        return false;
+    }
+    if (com_queue[3]->background != 1)
+    {
+        perror("ERROR: fourth command non matching background\n");
+        return false;
+    }
+
+    clean_up(com_queue);  //free com_queue
+    free(commandline);  //free commandline
+
+    return true;
+}
+
+bool parser_pipe_test(void)
+{
+    char *newline_p;  //points to and replaces \n with \0.
+    command **com_queue;  //array of pointers to command structs.
+    char *commandline;  //holds commandline input.
+
+    commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
+    
+    //line = fgets(line, MAX_COMMAND_LEN, stdin);
+    char *temp_line = "ls | ps | echo\n";  //newline required.
+    strcpy(commandline, temp_line);
+
+    newline_p = index(commandline, '\n');
+    *newline_p = '\0';  //replace '\n' with '\0'
+
+    com_queue = process_cmd_line(commandline, 1);
+
+    int com_count = 0;
+    while (com_queue[com_count] != NULL) 
+    {
+        com_count++;
+    }
+
+    if (com_count != 3)
+    {
+        perror("ERROR: num of commands not matching\n");
+        return false;
+    }
+    
+    if (com_queue[0]->pipe_to != 1)
+    {
+        perror("ERROR: first command pipe non matching correct com_queue element\n");
+        return false;
+    }
+    if (com_queue[1]->pipe_to != 2)
+    {
+        perror("ERROR: second command pipe non matching correct com_queue element\n");
+        return false;
+    }
+    if (com_queue[2]->pipe_to != 0)
+    {
+        perror("ERROR: third command pipe non matching correct com_queue element\n");
+        return false;
+    }
+
+    clean_up(com_queue);  //free com_queue
+    free(commandline);  //free commandline
+
+    return true;
+}
+
+bool parser_spacing_test(void)
+{
+    char *newline_p;  //points to and replaces \n with \0.
+    command **com_queue;  //array of pointers to command structs.
+    char *commandline;  //holds commandline input.
+
+    commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
+    
+    //line = fgets(line, MAX_COMMAND_LEN, stdin);
+    char *temp_line = "ls;ls ;ls;  ls     ;\n";  //newline required.
+    strcpy(commandline, temp_line);
+
+    newline_p = index(commandline, '\n');
+    *newline_p = '\0';  //replace '\n' with '\0'
+
+    com_queue = process_cmd_line(commandline, 1);
+
+    int com_count = 0;
+    while (com_queue[com_count] != NULL) 
+    {
+        com_count++;
+    }
+
+    if (com_count != 4)
+    {
+        perror("ERROR: num of commands not matching\n");
+        return false;
+    }
+    
+
+    clean_up(com_queue);  //free com_queue
+    free(commandline);  //free commandline
 
     return true;
 }
