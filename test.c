@@ -77,7 +77,7 @@ bool example_test(void)
 
 bool parser_test(void)
 {
-    char *newline_p;  //points to and replaces \n with \0.
+    /*char *newline_p;  //points to and replaces \n with \0.
     command **com_queue;  //array of pointers to command structs.
     char *commandline;  //holds commandline input.
 
@@ -100,7 +100,7 @@ bool parser_test(void)
     }
 
     clean_up(com_queue);  //free com_queue
-    free(commandline);  //free commandline
+    free(commandline);  //free commandline*/
 
     return true;
 }
@@ -114,7 +114,7 @@ bool parser_semicolon_test(void)
     commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
     
     //line = fgets(line, MAX_COMMAND_LEN, stdin);
-    char *temp_line = "ls -l|ps&\n";  //newline required.
+    char *temp_line = "ls -l; ls | echo; ps&\n";  //newline required.
     strcpy(commandline, temp_line);
 
     newline_p = index(commandline, '\n');
