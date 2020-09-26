@@ -296,31 +296,37 @@ bool parser_double_sep_test(void)
     char *com3 = "ls ;     ; ls";
     char *com4 = "ls;;ls";
     char *com5 = "ls;ls;";
+    char *com6 = "ls ; ls";
 
 
     if(!check_double_sep(com1))
     {
-        perror("ERROR: bad sep pair not foud in com1\n");
+        perror("ERROR: bad sep pair not found in com1\n");
         return false;
     }
     if(!check_double_sep(com2))
     {
-        perror("ERROR: bad sep pair not foud in com2\n");
+        perror("ERROR: bad sep pair not found in com2\n");
         return false;
     }
     if(!check_double_sep(com3))
     {
-        perror("ERROR: bad sep pair not foud in com3\n");
+        perror("ERROR: bad sep pair not found in com3\n");
         return false;
     }
     if(!check_double_sep(com4))
     {
-        perror("ERROR: bad sep pair not foud in com4\n");
+        perror("ERROR: bad sep pair not found in com4\n");
         return false;
     }
-    if(!check_double_sep(com5))
+    if(check_double_sep(com5))
     {
-        perror("ERROR: bad sep pair not foud in com5\n");
+        perror("ERROR: false positive in com5\n");
+        return false;
+    }
+    if(check_double_sep(com6))
+    {
+        perror("ERROR: false positive in com6\n");
         return false;
     }
     

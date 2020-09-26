@@ -491,13 +491,13 @@ bool check_double_sep(char *line)
       j = i + 1;
       if (line[i] == '|' || line[i] == '&' || line[i] == ';' || line[i] == '<' || line[i] == '>')
       {
-         while (line[j] != '|' && line[j] != '&' && line[j] != ';' && line[j] != '<' && line[j] != '>' && line[j] != '\0')
+         while (line[j] != '\0')
          {
             if (line[j] == ' ')
             {
                j++;
             }
-            else if (line[i] == '|' || line[i] == '&' || line[i] == ';' || line[i] == '<' || line[i] == '>')
+            else if (line[j] == '|' || line[j] == '&' || line[j] == ';' || line[j] == '<' || line[j] == '>')
             {
                return true;
             }
