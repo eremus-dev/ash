@@ -1,6 +1,6 @@
 #include "ashell.h"
 
-void exec_shell() {
+/*void exec_shell() {
 
     command job_queue[MAX_JOBS];
     char * tokens[MAX_ARG_LEN]; 
@@ -101,4 +101,4 @@ void print_prompt(void){
 
 void exit_shell(int stat){
     printf("exit\n");
-}
+}*/

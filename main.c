@@ -2,7 +2,7 @@
 
 int main(void) {
     
-    exec_shell();
+    //exec_shell();
 
     return 0;
 }
