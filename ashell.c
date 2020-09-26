@@ -17,8 +17,6 @@ void exec_shell() {
         newline_p = index(commandline, '\n');
         *newline_p = '\0';  //replace '\n' with '\0'
 
-<<<<<<< HEAD
-=======
         com_queue = process_cmd_line(commandline, 1);
 
         int com_count = 0;
@@ -28,11 +26,6 @@ void exec_shell() {
             com_count++;
         }
 
->>>>>>> master
-        // for(int i = 0; i <= jobcount; i++){
-        //     exec_command(&job_queue[i], tokens);
-        // }
-
         clean_up(com_queue);
         free(commandline);
     }
@@ -41,56 +34,17 @@ void exec_shell() {
 }
 
 // Function partly inspired by write up: https://brennan.io/2015/01/16/write-a-shell-in-c/
-/*char * get_commandline(void)
+char * get_commandline(void)
 {
  
-    return commandline;
-}*/
+    return (char *) NULL;
+}
 
-/*void exec_command(command * job, char * token[])
+void exec_command(void)
 {
-
-    for(int i = 0; i < job->command_count; i++){
-        int com_len = (job->command_queue[i]->last - job->command_queue[i]->first);
-        char * com_vec[com_len+1];
-
-        // handle redirection
-        if(job->command_queue[i]->in_sep != NULL | job->command_queue[i]->out_sep != NULL){
-            //handle redirection
-        }
-
-        int count = 0;
-        for(int j = job->command_queue[i]->first; j <= job->command_queue[i]->last; j++) {
-            com_vec[count++] = token[j];
-            printf("Argument %d to exec: %s\n", count, com_vec[count-1]);
-        }
-
-        com_vec[count] = (char *) NULL;
-
-        // do something about the PATH.
-
-        pid_t child = fork();
-        
-        if(child < 0){
-            perror("fork");
-            exit(-1);
-        } else if (child == 0) {
-            int check = execv("/usr/bin", com_vec);
-        
-            if(check == -1){
-                perror("execv");
-            }
-
-            printf("child exiting\n");
-            exit(-1);
-        } else if(!strcmp(token[job->sep],";")) {
-            printf("Child: %d\n", child);
-            waitpid(child, NULL, 0);
-        }
-    }
     
     return;
-}*/
+}
 
 void print_prompt(void){
     printf(">> ");

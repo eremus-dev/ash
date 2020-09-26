@@ -9,10 +9,29 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+/**
+ * 
+ */
 void exec_shell(void);
-//char * get_commandline(void);
-//void exec_command(JOB * job, char * token[]);
+
+/**
+ * 
+ */
+char * get_commandline(void);
+
+/**
+ * 
+ */
+void exec_command(void);
+
+/**
+ * 
+ */
 void print_prompt(void);
+
+/**
+ * 
+ */
 void exit_shell(int stat);
 
 #endif
