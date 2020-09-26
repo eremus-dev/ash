@@ -1,39 +1,53 @@
 #include "ashell.h"
 
+
 void exec_shell() {
 
-    command job_queue[MAX_JOBS];
-    char * tokens[MAX_ARG_LEN]; 
+    char *newline_p;  //points to and replaces \n with \0.
+    command **com_queue;  //array of pointers to command structs.
+    char *commandline;  //holds commandline input.
     
     // never returns
     while(true){
         print_prompt();
-        char * commandline = get_commandline();
 
-        int jobcount = parse_commandline(commandline, job_queue, tokens);
-        
-        
+        commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
+        commandline = fgets(commandline, MAX_COMMAND_LEN, stdin);
 
-        if(jobcount == -1){
-            perror("parser");
+        newline_p = index(commandline, '\n');
+        *newline_p = '\0';  //replace '\n' with '\0'
+
+<<<<<<< HEAD
+=======
+        com_queue = process_cmd_line(commandline, 1);
+
+        int com_count = 0;
+        while (com_queue[com_count] != NULL) 
+        {
+            dump_structure(com_queue[com_count], com_count);
+            com_count++;
         }
 
+>>>>>>> master
         // for(int i = 0; i <= jobcount; i++){
         //     exec_command(&job_queue[i], tokens);
         // }
+
+        clean_up(com_queue);
+        free(commandline);
     }
 
     return;
 }
 
 // Function partly inspired by write up: https://brennan.io/2015/01/16/write-a-shell-in-c/
-char * get_commandline(void)
+/*char * get_commandline(void)
 {
  
     return commandline;
-}
+}*/
 
-void exec_command(command * job, char * token[])
+/*void exec_command(command * job, char * token[])
 {
 
     for(int i = 0; i < job->command_count; i++){
@@ -76,7 +90,7 @@ void exec_command(command * job, char * token[])
     }
     
     return;
-}
+}*/
 
 void print_prompt(void){
     printf(">> ");

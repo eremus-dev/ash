@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ashell_const.h"
 
 /*The length of the command line.*/
 #define CMD_LENGTH 256
@@ -30,12 +31,12 @@ static const char white_space[3] = { (char) 0x20, (char) 0x09, (char) 0x00 };
  */
 typedef struct Command_struct
 {
-   char * com_name; 
-   char ** argv;
-   int background;
-   char * redirect_in;
-   char * redirect_out;
-   int pipe_to;
+   char *com_name;
+   char **argv;
+   int background;  //1 if & present, 0 if not.
+   char *redirect_in;
+   char *redirect_out;
+   int pipe_to;  //index to command array element.
 }
 command;
 
@@ -129,4 +130,5 @@ void dump_structure(command * c, int count);
  *
  */
 void print_human_readable(command * c, int count);
+
 #endif
