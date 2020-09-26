@@ -7,7 +7,9 @@ bool example_test(void);
 
 //parser tests:
 bool parser_test(void);
-bool parser_semicolon_test(void);
+bool parser_semicol_and_amp_test(void);
+bool parser_pipe_test(void);
+bool parser_spacing_test(void);
 
 
 int main(void) 
@@ -31,15 +33,39 @@ int main(void)
         fail++;
     }
 
-    //semicolon separator recognition test
-    if (parser_semicolon_test())
+    //';' and '&' separator recognition test
+    if (parser_semicol_and_amp_test())
     {
-        printf("function parser_semicolon_test() passed.\n");
+        printf("function parser_semicol_and_amp_test() passed.\n");
         success++;
     }
     else
     {
-        printf("function parser_semicolon_test() failed.\n");
+        printf("function parser_semicol_and_amp_test() failed.\n");
+        fail++;
+    }
+
+    //'|' separator recognition test
+    if (parser_pipe_test())
+    {
+        printf("function parser_pipe_test() passed.\n");
+        success++;
+    }
+    else
+    {
+        printf("function parser_pipe_test() failed.\n");
+        fail++;
+    }
+    
+    //multiple spaces no effect test
+    if (parser_spacing_test())
+    {
+        printf("function parser_spacing_test() passed.\n");
+        success++;
+    }
+    else
+    {
+        printf("function parser_spacing_test() failed.\n");
         fail++;
     }
 
@@ -84,7 +110,7 @@ bool parser_test(void)
     commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
     
     //line = fgets(line, MAX_COMMAND_LEN, stdin);
-    char *temp_line = "ls -l |ps -H & file.txt\n";  //newline required.
+    char *temp_line = "ls | ps | echo\n";  //newline required.
     strcpy(commandline, temp_line);
 
     newline_p = index(commandline, '\n');
@@ -105,7 +131,7 @@ bool parser_test(void)
     return true;
 }
 
-bool parser_semicolon_test(void)
+bool parser_semicol_and_amp_test(void)
 {
     char *newline_p;  //points to and replaces \n with \0.
     command **com_queue;  //array of pointers to command structs.
@@ -114,7 +140,7 @@ bool parser_semicolon_test(void)
     commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
     
     //line = fgets(line, MAX_COMMAND_LEN, stdin);
-    char *temp_line = "ls -l; ls | echo; ps&\n";  //newline required.
+    char *temp_line = "ls -l; ls & echo; ps&\n";  //newline required.
     strcpy(commandline, temp_line);
 
     newline_p = index(commandline, '\n');
@@ -122,12 +148,121 @@ bool parser_semicolon_test(void)
 
     com_queue = process_cmd_line(commandline, 1);
 
-    int i = 0;
-    while (com_queue[i] != NULL) {
-        dump_structure(com_queue[i], i);  //print command structs
-        //print_human_readable(com_queue[i], i);
-        i++;
+    int com_count = 0;
+    while (com_queue[com_count] != NULL) {
+        com_count++;
     }
+
+    if (com_count != 4)
+    {
+        perror("ERROR: num of commands not matching\n");
+        return false;
+    }
+    if (com_queue[0]->background != 0)
+    {
+        perror("ERROR: first command non matching background\n");
+        return false;
+    }
+    if (com_queue[1]->background != 1)
+    {
+        perror("ERROR: second command non matching background\n");
+        return false;
+    }
+    if (com_queue[2]->background != 0)
+    {
+        perror("ERROR: third command non matching background\n");
+        return false;
+    }
+    if (com_queue[3]->background != 1)
+    {
+        perror("ERROR: fourth command non matching background\n");
+        return false;
+    }
+
+    clean_up(com_queue);  //free com_queue
+    free(commandline);  //free commandline
+
+    return true;
+}
+
+bool parser_pipe_test(void)
+{
+    char *newline_p;  //points to and replaces \n with \0.
+    command **com_queue;  //array of pointers to command structs.
+    char *commandline;  //holds commandline input.
+
+    commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
+    
+    //line = fgets(line, MAX_COMMAND_LEN, stdin);
+    char *temp_line = "ls | ps | echo\n";  //newline required.
+    strcpy(commandline, temp_line);
+
+    newline_p = index(commandline, '\n');
+    *newline_p = '\0';  //replace '\n' with '\0'
+
+    com_queue = process_cmd_line(commandline, 1);
+
+    int com_count = 0;
+    while (com_queue[com_count] != NULL) {
+        com_count++;
+    }
+
+    if (com_count != 3)
+    {
+        perror("ERROR: num of commands not matching\n");
+        return false;
+    }
+    
+    if (com_queue[0]->pipe_to != 1)
+    {
+        perror("ERROR: first command pipe non matching correct com_queue element\n");
+        return false;
+    }
+    if (com_queue[1]->pipe_to != 2)
+    {
+        perror("ERROR: second command pipe non matching correct com_queue element\n");
+        return false;
+    }
+    if (com_queue[2]->pipe_to != 0)
+    {
+        perror("ERROR: third command pipe non matching correct com_queue element\n");
+        return false;
+    }
+
+    clean_up(com_queue);  //free com_queue
+    free(commandline);  //free commandline
+
+    return true;
+}
+
+bool parser_spacing_test(void)
+{
+    char *newline_p;  //points to and replaces \n with \0.
+    command **com_queue;  //array of pointers to command structs.
+    char *commandline;  //holds commandline input.
+
+    commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
+    
+    //line = fgets(line, MAX_COMMAND_LEN, stdin);
+    char *temp_line = "ls;ls ;ls;  ls     ;\n";  //newline required.
+    strcpy(commandline, temp_line);
+
+    newline_p = index(commandline, '\n');
+    *newline_p = '\0';  //replace '\n' with '\0'
+
+    com_queue = process_cmd_line(commandline, 1);
+
+    int com_count = 0;
+    while (com_queue[com_count] != NULL) {
+        com_count++;
+    }
+
+    if (com_count != 4)
+    {
+        perror("ERROR: num of commands not matching\n");
+        return false;
+    }
+    
 
     clean_up(com_queue);  //free com_queue
     free(commandline);  //free commandline
