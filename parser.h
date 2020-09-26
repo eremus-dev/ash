@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ashell_const.h"
 
 /*The length of the command line.*/
 #define CMD_LENGTH 256
@@ -129,4 +130,5 @@ void dump_structure(command * c, int count);
  *
  */
 void print_human_readable(command * c, int count);
+
 #endif

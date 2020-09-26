@@ -12,6 +12,7 @@ bool parser_pipe_test(void);
 bool parser_spacing_test(void);
 
 
+
 int main(void) 
 {  
     int fail = 0;
@@ -56,7 +57,7 @@ int main(void)
         printf("function parser_pipe_test() failed.\n");
         fail++;
     }
-    
+
     //multiple spaces no effect test
     if (parser_spacing_test())
     {
@@ -119,7 +120,8 @@ bool parser_test(void)
     com_queue = process_cmd_line(commandline, 1);
 
     int i = 0;
-    while (com_queue[i] != NULL) {
+    while (com_queue[i] != NULL) 
+    {
         dump_structure(com_queue[i], i);  //print command structs
         //print_human_readable(com_queue[i], i);
         i++;
@@ -149,7 +151,8 @@ bool parser_semicol_and_amp_test(void)
     com_queue = process_cmd_line(commandline, 1);
 
     int com_count = 0;
-    while (com_queue[com_count] != NULL) {
+    while (com_queue[com_count] != NULL) 
+    {
         com_count++;
     }
 
@@ -203,7 +206,8 @@ bool parser_pipe_test(void)
     com_queue = process_cmd_line(commandline, 1);
 
     int com_count = 0;
-    while (com_queue[com_count] != NULL) {
+    while (com_queue[com_count] != NULL) 
+    {
         com_count++;
     }
 
@@ -253,7 +257,8 @@ bool parser_spacing_test(void)
     com_queue = process_cmd_line(commandline, 1);
 
     int com_count = 0;
-    while (com_queue[com_count] != NULL) {
+    while (com_queue[com_count] != NULL) 
+    {
         com_count++;
     }
 
