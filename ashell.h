@@ -3,6 +3,7 @@
 
 #include "parser.h"
 #include "ashell_const.h"
+#include "utilities.h"
 
 #include <stdbool.h>
 #include <unistd.h>
@@ -33,5 +34,6 @@ void print_prompt(void);
  * 
  */
 void exit_shell(int stat);
+
 
 #endif

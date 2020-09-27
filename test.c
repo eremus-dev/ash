@@ -6,11 +6,17 @@
 bool example_test(void);
 
 //parser tests:
+
 bool parser_test(void);
 bool parser_semicol_and_amp_test(void);
 bool parser_pipe_test(void);
 bool parser_spacing_test(void);
 bool parser_double_sep_test(void);
+
+//parser feature check list for marking guide
+
+//checks that basic commands ps, ls, and ./show a b c work.
+bool parser_feature_2(void);
 
 
 
@@ -19,9 +25,20 @@ int main(void)
     int fail = 0;
     int success = 0;
 
-    
+    //Example test
+    if (example_test())
+    {
+        printf("function example_test() passed.\n");
+        success++;
+    }
+    else
+    {
+        printf("function example_test() failed.\n");
+        fail++;
+    }
 
     //parser tests
+    printf("\tGeneral parser tests:\n");
 
     //general parser testing test
     if (parser_test())
@@ -84,19 +101,23 @@ int main(void)
     }
 
 
-
-
-    //Example test
-    if (example_test())
+    //parser marking guide checks
+    printf("\tParser marking guide checks:\n");
+    
+    if (parser_feature_2())
     {
-        printf("function example_test() passed.\n");
+        printf("function parser_feature_2() passed.\n");
         success++;
     }
     else
     {
-        printf("function example_test() failed.\n");
+        printf("function parser_feature_2() failed.\n");
         fail++;
     }
+
+
+
+    
 
     printf("PASSES: %d, FAILS: %d\n", success, fail);
 }
@@ -330,5 +351,142 @@ bool parser_double_sep_test(void)
         return false;
     }
     
+    return true;
+}
+
+bool parser_feature_2(void)
+{
+    char *newline_p;  //points to and replaces \n with \0.
+    command **com_queue;  //array of pointers to command structs.
+    char *commandline;  //holds commandline input.
+
+    commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
+    
+    //line = fgets(line, MAX_COMMAND_LEN, stdin);
+    char *temp_line = "ls\n";  //newline required.
+    strcpy(commandline, temp_line);
+
+    newline_p = index(commandline, '\n');
+    *newline_p = '\0';  //replace '\n' with '\0'
+
+    com_queue = process_cmd_line(commandline, 1);
+
+    int com_count = 0;
+    while (com_queue[com_count] != NULL) 
+    {
+        com_count++;
+    }
+
+    if (com_count != 1)
+    {
+        perror("ERROR: num of commands not matching\n");
+        return false;
+    }
+    if (strcmp(com_queue[0]->com_name, "ls") != 0)
+    {
+        perror("ERROR: com_name not matching\n");
+        return false;
+    }
+    if (com_queue[0]->background != 0)
+    {
+        perror("ERROR: background not matching\n");
+        return false;
+    }
+    if (com_queue[0]->pipe_to != 0)
+    {
+        perror("ERROR: pipe_to not matching\n");
+        return false;
+    }
+    if (com_queue[0]->redirect_in != NULL)
+    {
+        perror("ERROR: redirect_in to matching\n");
+        return false;
+    }
+    if (com_queue[0]->redirect_out != NULL)
+    {
+        perror("ERROR: redirect_out to matching\n");
+        return false;
+    }
+
+    clean_up(com_queue);  //free com_queue
+    free(commandline);  //free commandline
+
+    commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
+    
+    //line = fgets(line, MAX_COMMAND_LEN, stdin);
+    char *temp_line2 = "ps\n";  //newline required.
+    strcpy(commandline, temp_line2);
+
+    newline_p = index(commandline, '\n');
+    *newline_p = '\0';  //replace '\n' with '\0'
+
+    com_queue = process_cmd_line(commandline, 1);
+
+    com_count = 0;
+    while (com_queue[com_count] != NULL) 
+    {
+        com_count++;
+    }
+
+    if (com_count != 1)
+    {
+        perror("ERROR: num of commands not matching\n");
+        return false;
+    }
+    if (strcmp(com_queue[0]->com_name, "ps") != 0)
+    {
+        perror("ERROR: com_name not matching\n");
+        return false;
+    }
+
+    clean_up(com_queue);  //free com_queue
+    free(commandline);  //free commandline
+
+    commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
+    
+    //line = fgets(line, MAX_COMMAND_LEN, stdin);
+    char *temp_line3 = "./show a b c\n";  //newline required.
+    strcpy(commandline, temp_line3);
+
+    newline_p = index(commandline, '\n');
+    *newline_p = '\0';  //replace '\n' with '\0'
+
+    com_queue = process_cmd_line(commandline, 1);
+
+    com_count = 0;
+    while (com_queue[com_count] != NULL) 
+    {
+        com_count++;
+    }
+
+    if (com_count != 1)
+    {
+        perror("ERROR: num of commands not matching\n");
+        return false;
+    }
+    if (strcmp(com_queue[0]->com_name, "./show") != 0)
+    {
+        perror("ERROR: com_name not matching\n");
+        return false;
+    }
+    if (strcmp(com_queue[0]->argv[1], "a") != 0)
+    {
+        perror("ERROR: argv[1] not matching\n");
+        return false;
+    }
+    if (strcmp(com_queue[0]->argv[2], "b") != 0)
+    {
+        perror("ERROR: argv[2] not matching\n");
+        return false;
+    }
+    if (strcmp(com_queue[0]->argv[3], "c") != 0)
+    {
+        perror("ERROR: argv[3] not matching\n");
+        return false;
+    }
+
+    clean_up(com_queue);  //free com_queue
+    free(commandline);  //free commandline
+
     return true;
 }

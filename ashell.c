@@ -7,8 +7,10 @@ void exec_shell() {
     command **com_queue;  //array of pointers to command structs.
     char *commandline;  //holds commandline input.
     
+    bool exit_flag = true;  //for checking if exit was entered
+
     // never returns
-    while(true){
+    while(exit_flag){
         print_prompt();
 
         commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
@@ -30,8 +32,40 @@ void exec_shell() {
         int com_count = 0;
         while (com_queue[com_count] != NULL) 
         {
-            dump_structure(com_queue[com_count], com_count);
+            dump_structure(com_queue[com_count], com_count);  //prints command structs, comment out in final version.
             com_count++;
+        }
+
+        for(int i=0; i<com_count; i++) //iterates through array of commands, executing each.
+        {
+            printf("executing command %d\n", i);
+            if (strcmp(com_queue[i]->com_name, "exit") == 0) //checks if exit is com_name
+            {
+                exit_flag = false;
+                break;  //breaks out of for loop, com_queue and commandline should still free before prog terminates.
+            }
+            else if (strcmp(com_queue[i]->com_name, "cd") == 0)
+            {
+                int r = cd_command(com_queue[i]);
+                if (r != 0)
+                {
+                    perror("cd error\n");
+                    break;
+                }
+            }
+            else if (strcmp(com_queue[i]->com_name, "pwd") == 0)
+            {
+                int r = pwd_command(com_queue[i]);
+                if (r != 0)
+                {
+                    perror("pwd error\n");
+                    break;
+                }
+            }
+            else
+            {
+                //exec_command(&job_queue[i], tokens);
+            }
         }
 
         clean_up(com_queue);

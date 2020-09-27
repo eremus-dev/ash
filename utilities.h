@@ -8,11 +8,21 @@ Functions to implement:
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
+#include "parser.h"
+
+#include <unistd.h>
+#include <limits.h>
+
 // function to change the current prompt string.
 void change_prompt(char * new_string);
 
-// function to change the current working directory.
-void change_pwd(char * path);
+// function to display the current working directory.
+// returns 0 if successful, -1 if not.
+int pwd_command(command * com);
+
+// function to navigate to a particular directory
+// returns 0 if successful, -1 if not.
+int cd_command(command * com);
 
 
 #endif
