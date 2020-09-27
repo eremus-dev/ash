@@ -44,8 +44,28 @@ void exec_shell() {
                 exit_flag = false;
                 break;  //breaks out of for loop, com_queue and commandline should still free before prog terminates.
             }
-            
-            //exec_command(&job_queue[i], tokens);
+            else if (strcmp(com_queue[i]->com_name, "cd") == 0)
+            {
+                int r = cd_command(com_queue[i]);
+                if (r != 0)
+                {
+                    perror("cd error\n");
+                    break;
+                }
+            }
+            else if (strcmp(com_queue[i]->com_name, "pwd") == 0)
+            {
+                int r = pwd_command(com_queue[i]);
+                if (r != 0)
+                {
+                    perror("pwd error\n");
+                    break;
+                }
+            }
+            else
+            {
+                //exec_command(&job_queue[i], tokens);
+            }
         }
 
         clean_up(com_queue);
