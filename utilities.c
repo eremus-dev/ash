@@ -49,9 +49,8 @@ int cd_command(command * com)
     }
     else
     {
-        //cd /path/to/dir.
+        r = chdir(com->argv[1]);
     }
-    
     
     return r;
 }
