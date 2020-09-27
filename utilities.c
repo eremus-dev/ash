@@ -2,22 +2,25 @@
 
 int pwd_command(command * com)
 {
-    char current_path[PATH_MAX];
+    char current_path[PATH_MAX];  //useing PATH_MAX from limits.h
 
+    //counts number of arguments
     int num_args = 0;
-    while (com->argv[num_args+1] != NULL)
+    while (com->argv[num_args] != NULL)
     {
         num_args++;
     }
 
-    if (num_args != 0)
+    //pwd should be by itself, so returns -1 if args not equal to 1.
+    if (num_args != 1)
     {
         return -1;
     }
     
-
+    //save current working directory to current_path.
     char *r = getcwd(current_path, PATH_MAX);
 
+    //r == NULL if getcwd() failed in some way.
     if (r == NULL)
     {
         return -1;
@@ -33,21 +36,23 @@ int cd_command(command * com)
     int num_args = 0;
     int r = 0;
 
-    while (com->argv[num_args+1] != NULL)
+    //count number of arguments.
+    while (com->argv[num_args] != NULL)
     {
         num_args++;
     }
 
-    if (num_args < 1)
+    if (num_args < 2) //just cd by itself.
     {
+        //gets home directory path, then changes current directory to it.
         char * path_home = getenv("HOME");
         r = chdir(path_home);
     }
-    else if (num_args > 1)
+    else if (num_args > 2)  //cd x y should be invalid input
     {
         r = -1;
     }
-    else
+    else  //cd /path/to/dir . returns -1 if chdir() fails.
     {
         r = chdir(com->argv[1]);
     }

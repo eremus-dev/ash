@@ -16,9 +16,12 @@ Functions to implement:
 // function to change the current prompt string.
 void change_prompt(char * new_string);
 
-// function to change the current working directory.
+// function to display the current working directory.
+// returns 0 if successful, -1 if not.
 int pwd_command(command * com);
 
+// function to navigate to a particular directory
+// returns 0 if successful, -1 if not.
 int cd_command(command * com);
 
 
