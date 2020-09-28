@@ -88,7 +88,7 @@ int main(void)
                     break;
                 }
             }
-            else if(strcmp(com_queue[i]->com_name, "\n") == 0)
+            else if(strcmp(com_queue[i]->com_name, "") == 0)
             {
                 print_prompt(prompt);
             }
