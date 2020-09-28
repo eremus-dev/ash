@@ -27,15 +27,16 @@ int main(void)
         *newline_p = '\0';  //replace '\n' with '\0'
 
         //checks if invalid separator pair, frees commandline, moves to next loop.
-        if (check_last_separator(commandline))
+        if(check_double_sep(commandline))
         {
-            perror("ERROR: invalid final separator\n");
+            perror("ERROR: invalid pair of separators\n");
             free(commandline);
             continue;
         }
-        else if(check_double_sep(commandline))
+        //checks if no '<' or '>' at end of commandline.
+        else if (check_last_separator(commandline))
         {
-            perror("ERROR: invalid pair of separators\n");
+            perror("ERROR: invalid final separator\n");
             free(commandline);
             continue;
         }
