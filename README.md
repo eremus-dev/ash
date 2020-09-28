@@ -5,6 +5,6 @@ Shell Project for operating systems unit.
 
 ##### Authors: 
     - Nathan Brysland
-    - Sam Glenister
+    - Sam aka eremus-dev
 
 This code is under the MIT license.
