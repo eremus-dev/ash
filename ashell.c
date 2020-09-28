@@ -14,29 +14,28 @@ void exec_command(command * com, int in, int out, int off)
     }
     else if(check == 0)
     {
-
         // redirect stdin if in != 0
         if(in != 0)
         {
             if(dup2(in, 0) == -1)
             {
                 perror("stdin dup2");
-                return;
+                exit(-1);
             }
-        }
-
-        // shut unused pipe end.
-        if(off != 0)
-        {
-            close(off);
         }
 
         // redirect stdout if out != 0
         if(out != 0){
             if(dup2(out, 1) == -1){
                 perror("stdout dup2");
-                return;
+                exit(-1);
             }
+        }
+        
+        // shut unused pipe end.
+        if(off != 0)
+        {
+            close(off);
         }
 
         if(execvp(com->argv[0], com->argv) == -1)
@@ -44,6 +43,7 @@ void exec_command(command * com, int in, int out, int off)
             perror(com->argv[0]);
             exit(-1);
         }
+        
         // should be unreachable.
         printf("exec failed this should be unreachable\n");
         exit(-1);
@@ -53,8 +53,16 @@ void exec_command(command * com, int in, int out, int off)
         wait(&status);
     } 
 
-    close(in);
+    if(out != 0)
+    {
+        close(out);
+    }
 
+    if(in != 0)
+    {
+        close(in);
+    }
+    
     return;
 }
 
@@ -115,7 +123,7 @@ int handle_redirection(command * com, int * in, int * out, int * off, int * pipe
 
 void print_prompt(char * prompt)
 {
-    printf("\n%s ", prompt);
+    printf("\n\033[1;32m%s\033[0m ", prompt);
 }
 
 void exit_shell(int stat)
