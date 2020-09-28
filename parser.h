@@ -26,17 +26,17 @@ static const char white_space[3] = { (char) 0x20, (char) 0x09, (char) 0x00 };
  * com_name : pointer to command name.
  * argv : pointer to array of command arguments.
  * background : command to be run in background.
- * redirect_in : pointer to file redirection character next arg is file name.
- * redirect_out : pointer to file redirection character next arg is file name.
+ * redirect_in : pointer to file  name string
+ * redirect_out : pointer to file name string
  * pipe_to : command array index to pipe output to.
  */
 typedef struct Command_struct
 {
-   char *com_name;
-   char **argv;
+   char *com_name; // command name string
+   char **argv;    // char array of command args
    int background;  //1 if & present, 0 if not.
-   char *redirect_in;
-   char *redirect_out;
+   char *redirect_in; // pointer to file  name string
+   char *redirect_out; // pointer to file  name string
    int pipe_to;  //index to command array element.
 }
 command;
