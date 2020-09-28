@@ -46,12 +46,13 @@ int main(void)
         int com_count = 0;
         while (com_queue[com_count] != NULL) 
         {
-            dump_structure(com_queue[com_count], com_count);  //prints command structs, comment out in final version.
+            //dump_structure(com_queue[com_count], com_count);  //prints command structs, comment out in final version.
             com_count++;
         }
 
         int in = 0; // file decriptor for stdin redirection
         int out = 0; // file descriptor for stdout redirection
+        int off = 0; // pipe end to close.
         int pipefd[2] = {0}; // pipe fd's for handle redirection
 
         for(int i=0; i<com_count; i++) //iterates through array of commands, executing each.
@@ -87,14 +88,16 @@ int main(void)
                     break;
                 }
             }
-            else if(strcmp(com_queue[i]->com_name, "\n") == 0)
+            else if(strcmp(com_queue[i]->com_name, "") == 0)
             {
                 print_prompt(prompt);
             }
             else
             {
-                if(handle_redirection(com_queue[i], &in, &out, pipefd) != -1){
-                    exec_command(com_queue[i], in, out);
+                if(handle_redirection(com_queue[i], &in, &out, &off, pipefd) != -1)
+                {
+                    //printf("Command: %s, in: %d, out: %d, off: %d\n", com_queue[i]->com_name, in, out, off);
+                    exec_command(com_queue[i], &in, &out, &off);
                 } 
                 
                 // harvest zombies
