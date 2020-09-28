@@ -86,7 +86,8 @@ int main(void)
             }
             else
             {
-                if(handle_redirection(com_queue[i], &in, &out, pipefd) != -1){
+                if(handle_redirection(com_queue[i], &in, &out, pipefd) != -1)
+                {
                     exec_command(com_queue[i], in, out);
                 } 
                 
