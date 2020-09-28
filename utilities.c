@@ -61,32 +61,11 @@ int cd_command(command * com)
 }
 
 int change_prompt(char * curr_prompt, command * com){
-    
-    int num_args = 0;
-    int r = 0;
-
-    //count number of arguments.
-    while (com->argv[num_args] != NULL)
-    {
-        num_args++;
-    }
-
-    if (num_args != 2)
-    {
-        r = -1;
-    }
-    else
-    {
-        strncpy(curr_prompt, com->argv[1], MAX_PROMPT);
-        r = 0;
-    }
-    
-
-    /*if(com->argv[1] != NULL){
+    if(com->argv[1] != NULL){
         strncpy(curr_prompt, com->argv[1], MAX_PROMPT);
     } else {
         return -1;
-    }*/
+    }
 
-    return r;
+    return 0;
 }

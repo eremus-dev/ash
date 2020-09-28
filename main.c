@@ -70,7 +70,7 @@ int main(void)
             }
             else if(strcmp(com_queue[i]->com_name, "prompt") == 0)
             {
-                if(change_prompt(prompt, com_queue[i]) != 0){
+                if(change_prompt(prompt, com_queue[i]) == -1){
                     perror("prompt");
                     break;
                 }
