@@ -10,4 +10,7 @@
 // Max number of arguments in command struct. temporary
 #define MAX_ARG_LEN 1000
 
+// MAX size of prompt
+#define MAX_PROMPT 64
+
 #endif

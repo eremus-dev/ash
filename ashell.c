@@ -1,97 +1,37 @@
 #include "ashell.h"
 
 
-void exec_shell() {
-
-    char *newline_p;  //points to and replaces \n with \0.
-    command **com_queue;  //array of pointers to command structs.
-    char *commandline;  //holds commandline input.
-    
-    bool exit_flag = true;  //for checking if exit was entered
-
-    // never returns
-    while(exit_flag){
-        print_prompt();
-
-        commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
-        commandline = fgets(commandline, MAX_COMMAND_LEN, stdin);
-
-        newline_p = index(commandline, '\n');
-        *newline_p = '\0';  //replace '\n' with '\0'
-
-        //checks if invalid separator pair, frees commandline, moves to next loop.
-        if(check_double_sep(commandline))
-        {
-            perror("ERROR: invalid pair of separators\n");
-            free(commandline);
-            continue;
-        }
-
-        com_queue = process_cmd_line(commandline, 1);
-
-        int com_count = 0;
-        while (com_queue[com_count] != NULL) 
-        {
-            dump_structure(com_queue[com_count], com_count);  //prints command structs, comment out in final version.
-            com_count++;
-        }
-
-        for(int i=0; i<com_count; i++) //iterates through array of commands, executing each.
-        {
-            printf("executing command %d\n", i);
-            if (strcmp(com_queue[i]->com_name, "exit") == 0) //checks if exit is com_name
-            {
-                exit_flag = false;
-                break;  //breaks out of for loop, com_queue and commandline should still free before prog terminates.
-            }
-            else if (strcmp(com_queue[i]->com_name, "cd") == 0)
-            {
-                int r = cd_command(com_queue[i]);
-                if (r != 0)
-                {
-                    perror("cd error\n");
-                    break;
-                }
-            }
-            else if (strcmp(com_queue[i]->com_name, "pwd") == 0)
-            {
-                int r = pwd_command(com_queue[i]);
-                if (r != 0)
-                {
-                    perror("pwd error\n");
-                    break;
-                }
-            }
-            else
-            {
-                //exec_command(&job_queue[i], tokens);
-            }
-        }
-
-        clean_up(com_queue);
-        free(commandline);
+void exec_command(command * com)
+{
+    int status;
+    int check = fork();
+    if(check < 0)
+    {
+        perror("fork");
     }
-
-    return;
-}
-
-// Function partly inspired by write up: https://brennan.io/2015/01/16/write-a-shell-in-c/
-char * get_commandline(void)
-{
- 
-    return (char *) NULL;
-}
-
-void exec_command(void)
-{
+    else if(check == 0)
+    {
+        if(execvp(com->argv[0], com->argv) == -1)
+        {
+            perror(com->argv[0]);
+            exit(-1);
+        }
+    } 
+    else if( (check > 0) && (com->background == 0) )
+    {
+        wait(&status);
+    } 
     
     return;
 }
 
-void print_prompt(void){
-    printf(">> ");
+void print_prompt(char * prompt)
+{
+    printf("%s ", prompt);
 }
 
-void exit_shell(int stat){
+void exit_shell(int stat)
+{
     printf("exit\n");
 }
+
