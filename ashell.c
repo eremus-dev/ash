@@ -27,7 +27,7 @@ void exec_command(command * com)
 
 void print_prompt(char * prompt)
 {
-    printf("%s ", prompt);
+    printf("\n%s ", prompt);
 }
 
 void exit_shell(int stat)
