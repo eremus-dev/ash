@@ -139,4 +139,6 @@ void print_human_readable(command * c, int count);
  */
 bool check_double_sep(char *line);
 
+bool check_last_separator(char * line);
+
 #endif
