@@ -1,7 +1,7 @@
 #include "ashell.h"
 
 
-void exec_command(command * com, int * in, int *out, int * off)
+void exec_command(command * com, int * in, int *out, int * off,  int * child_count)
 {
     int status;
 
@@ -43,16 +43,17 @@ void exec_command(command * com, int * in, int *out, int * off)
         {
             perror(com->argv[0]);
             exit(-1);
-        }
-        
-        // should be unreachable.
-        printf("exec failed this should be unreachable\n");
-        exit(-1);
+        }       
     } 
     else if( (check > 0) && (com->background == 0) )
     {
         wait(&status);
     } 
+    else if( (check > 0) && (com->background == 1) )
+    {
+        *child_count += 1;
+        printf("[%d] %d\n", *child_count, check);
+    }
 
     if(*out != 0)
     {
@@ -65,7 +66,7 @@ void exec_command(command * com, int * in, int *out, int * off)
         close(*in);
         *in = 0;
     }
-    
+
     return;
 }
 
@@ -126,6 +127,7 @@ int handle_redirection(command * com, int * in, int * out, int * off, int * pipe
 
 void print_prompt(char * prompt)
 {
+    printf("\33[2K");
     printf("\n\033[1;32m%s\033[0m ", prompt);
 }
 
