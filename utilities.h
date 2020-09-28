@@ -22,7 +22,7 @@ Functions to implement:
  * Return:
  *      void
  */
-void change_prompt(char * prompt, command * com);
+int change_prompt(char * prompt, command * com);
 
 /**
  * function to display the current working directory.
