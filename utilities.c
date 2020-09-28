@@ -60,3 +60,12 @@ int cd_command(command * com)
     return r;
 }
 
+int change_prompt(char * curr_prompt, command * com){
+    if(com->argv[1] != NULL){
+        strncpy(curr_prompt, com->argv[1], MAX_PROMPT);
+    } else {
+        return -1;
+    }
+
+    return 0;
+}

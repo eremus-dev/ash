@@ -11,10 +11,10 @@ Functions to implement:
 #include "parser.h"
 
 #include <unistd.h>
-#include <limits.h>
+#include <linux/limits.h>
 
-// function to change the current prompt string.
-void change_prompt(char * new_string);
+// function to change the current prompt string to the argument passed to prompt command.
+int change_prompt(char * prompt, command * com);
 
 // function to display the current working directory.
 // returns 0 if successful, -1 if not.

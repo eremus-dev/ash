@@ -10,10 +10,20 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-void exec_shell(void);
-//char * get_commandline(void);
-//void exec_command(JOB * job, char * token[]);
-void print_prompt(void);
+
+/**
+ * 
+ */
+void exec_command(command * com);
+
+/**
+ * 
+ */
+void print_prompt(char * prompt);
+
+/**
+ * 
+ */
 void exit_shell(int stat);
 
 
