@@ -126,7 +126,7 @@ int handle_redirection(command * com, int * in, int * out, int * off, int * pipe
 
 void print_prompt(char * prompt)
 {
-    printf("\n\033[1;32m%s\033[0m ", prompt);
+    printf("\033[1;32m%s\033[0m ", prompt);
 }
 
 void exit_shell(int stat)
