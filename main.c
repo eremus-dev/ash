@@ -44,10 +44,10 @@ int main(void)
 
         for(int i=0; i<com_count; i++) //iterates through array of commands, executing each.
         {
-            //printf("executing command %d\n", i);
             if (strcmp(com_queue[i]->com_name, "exit") == 0) //checks if exit is com_name
             {
                 exit_flag = false;
+                exit_shell(0);
                 break;  //breaks out of for loop, com_queue and commandline should still free before prog terminates.
             }
             else if (strcmp(com_queue[i]->com_name, "cd") == 0)

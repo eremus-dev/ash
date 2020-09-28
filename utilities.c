@@ -64,7 +64,10 @@ int change_prompt(char * curr_prompt, command * com){
     if(com->argv[1] != NULL){
         strncpy(curr_prompt, com->argv[1], MAX_PROMPT);
     } else {
-        return -1;
+        printf("Enter new prompt: ");
+        fgets(curr_prompt, MAX_PROMPT, stdin);
+        int len = strlen(curr_prompt);
+        curr_prompt[len-1] = '\0';
     }
 
     return 0;
