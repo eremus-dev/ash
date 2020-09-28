@@ -513,3 +513,34 @@ bool check_double_sep(char *line)
 
    return false;
 }
+
+bool check_last_separator(char * line)
+{
+   int i = 0;
+   int j;
+   while (line[i] != '\0')
+   {
+      j = i + 1;
+      if (line[i] == '<' || line[i] == '>' || line[i] == '|')
+      {
+         while(line[j-1] != '\0')
+         {
+            if (line[j] == '\0')
+            {
+               return true;
+            }
+            if (line[j] == ' ')
+            {
+               j++;
+            }
+            else
+            {
+               break;
+            }
+         }
+      }
+      i++;
+   }
+
+   return false;
+}

@@ -34,6 +34,13 @@ int main(void)
             free(commandline);
             continue;
         }
+        //checks if ant hanging '<', '>', or '|' at end of commandline.
+        else if (check_last_separator(commandline))
+        {
+            perror("ERROR: invalid final separator\n");
+            free(commandline);
+            continue;
+        }
 
         com_queue = process_cmd_line(commandline, 1);
 
