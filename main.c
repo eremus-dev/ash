@@ -20,6 +20,7 @@ int main(void)
         // exits if CTL^D is entered
         if(commandline == NULL){
             feof(stdin);
+            exit_shell(0);
             exit(0);
         }
 
@@ -45,6 +46,7 @@ int main(void)
 
         int in = 0; // file decriptor for stdin redirection
         int out = 0; // file descriptor for stdout redirection
+        int off = 0; // pipe end to close.
         int pipefd[2] = {0}; // pipe fd's for handle redirection
 
         for(int i=0; i<com_count; i++) //iterates through array of commands, executing each.
@@ -86,9 +88,9 @@ int main(void)
             }
             else
             {
-                if(handle_redirection(com_queue[i], &in, &out, pipefd) != -1)
+                if(handle_redirection(com_queue[i], &in, &out, &off, pipefd) != -1)
                 {
-                    exec_command(com_queue[i], in, out);
+                    exec_command(com_queue[i], in, out, off);
                 } 
                 
                 // harvest zombies

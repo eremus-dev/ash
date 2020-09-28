@@ -1,17 +1,20 @@
 #include "ashell.h"
 
 
-void exec_command(command * com, int in, int out, int close)
+void exec_command(command * com, int in, int out, int off)
 {
     int status;
 
     int check = fork();
+
     if(check < 0)
     {
         perror("fork");
+        exit(-1);
     }
     else if(check == 0)
     {
+
         // redirect stdin if in != 0
         if(in != 0)
         {
@@ -20,6 +23,12 @@ void exec_command(command * com, int in, int out, int close)
                 perror("stdin dup2");
                 return;
             }
+        }
+
+        // shut unused pipe end.
+        if(off != 0)
+        {
+            close(off);
         }
 
         // redirect stdout if out != 0
@@ -35,16 +44,21 @@ void exec_command(command * com, int in, int out, int close)
             perror(com->argv[0]);
             exit(-1);
         }
+        // should be unreachable.
+        printf("exec failed this should be unreachable\n");
+        exit(0);
     } 
     else if( (check > 0) && (com->background == 0) )
     {
         wait(&status);
     } 
 
+    close(in);
+
     return;
 }
 
-int handle_redirection(command * com, int * in, int * out, int * pipefd)
+int handle_redirection(command * com, int * in, int * out, int * off, int * pipefd)
 {
     if(com->redirect_out != NULL)
     {
@@ -71,6 +85,7 @@ int handle_redirection(command * com, int * in, int * out, int * pipefd)
             return -1;
         } else {
             *out = pipefd[1];
+            *off = pipefd[0];
         }
     }
 
@@ -106,5 +121,6 @@ void print_prompt(char * prompt)
 void exit_shell(int stat)
 {
     printf("exit\n");
+    exit(0);
 }
 

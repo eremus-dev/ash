@@ -28,7 +28,7 @@
  * 
  * Should not return in the child process, 
  */
-void exec_command(command * com, int in, int out);
+void exec_command(command * com, int in, int out, int close);
 
 /**
  * Function to handle the redirection of the childs stdin or stdout to either file or pipe.
@@ -46,7 +46,7 @@ void exec_command(command * com, int in, int out);
  *  
  *      
  */
-int handle_redirection(command * com, int * in, int * out, int * pipefd);
+int handle_redirection(command * com, int * in, int * out, int * off, int * pipefd);
 
 /**
  * Function to 
