@@ -1,7 +1,7 @@
 #include "ashell.h"
 
 
-void exec_command(command * com, int in, int out, int off)
+void exec_command(command * com, int * in, int *out, int * off)
 {
     int status;
 
@@ -15,9 +15,9 @@ void exec_command(command * com, int in, int out, int off)
     else if(check == 0)
     {
         // redirect stdin if in != 0
-        if(in != 0)
+        if(*in != 0)
         {
-            if(dup2(in, 0) == -1)
+            if(dup2(*in, 0) == -1)
             {
                 perror("stdin dup2");
                 exit(-1);
@@ -25,17 +25,18 @@ void exec_command(command * com, int in, int out, int off)
         }
 
         // redirect stdout if out != 0
-        if(out != 0){
-            if(dup2(out, 1) == -1){
+        if(*out != 0){
+            if(dup2(*out, 1) == -1){
                 perror("stdout dup2");
                 exit(-1);
-            }
+            } 
         }
         
         // shut unused pipe end.
-        if(off != 0)
+        if(*off != 0)
         {
-            close(off);
+            close(*off);
+            *off = 0;
         }
 
         if(execvp(com->argv[0], com->argv) == -1)
@@ -53,14 +54,16 @@ void exec_command(command * com, int in, int out, int off)
         wait(&status);
     } 
 
-    if(out != 0)
+    if(*out != 0)
     {
-        close(out);
+        close(*out);
+        *out = 0;
     }
 
-    if(in != 0)
+    if(*in != 0)
     {
-        close(in);
+        close(*in);
+        *in = 0;
     }
     
     return;
@@ -68,6 +71,28 @@ void exec_command(command * com, int in, int out, int off)
 
 int handle_redirection(command * com, int * in, int * out, int * off, int * pipefd)
 {
+    if(com->redirect_in != NULL)
+    {
+        // stops including spaces in file names.
+
+        int count = 0;
+        while(*(com->redirect_in+count) == ' ')
+        {
+            count++;
+        }
+
+        //open file descript and save to in
+        if((*in = open(com->redirect_in+count, O_RDWR)) == -1)
+        {
+            perror("open");
+            *in = 0;
+            return -1;
+        }
+    } else if(fcntl(pipefd[0], F_GETFD) != -1) {
+        *in = pipefd[0];
+        *off = pipefd[1];
+    }
+
     if(com->redirect_out != NULL)
     {
         // stops including spaces in file names.
@@ -93,30 +118,8 @@ int handle_redirection(command * com, int * in, int * out, int * off, int * pipe
             return -1;
         } else {
             *out = pipefd[1];
-            *off = pipefd[0];
         }
-    }
-
-    if(com->redirect_in != NULL)
-    {
-        // stops including spaces in file names.
-
-        int count = 0;
-        while(*(com->redirect_in+count) == ' ')
-        {
-            count++;
-        }
-
-        //open file descript and save to in
-        if((*in = open(com->redirect_in+count, O_RDWR)) == -1)
-        {
-            perror("open");
-            *in = 0;
-            return -1;
-        }
-    } else if(fcntl(pipefd[0], F_GETFD) != -1) {
-        *in = pipefd[0];
-    }
+    } 
 
     return 0;
 }

@@ -96,7 +96,8 @@ int main(void)
             {
                 if(handle_redirection(com_queue[i], &in, &out, &off, pipefd) != -1)
                 {
-                    exec_command(com_queue[i], in, out, off);
+                    //printf("Command: %s, in: %d, out: %d, off: %d\n", com_queue[i]->com_name, in, out, off);
+                    exec_command(com_queue[i], &in, &out, &off);
                 } 
                 
                 // harvest zombies
