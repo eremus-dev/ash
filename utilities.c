@@ -60,7 +60,7 @@ int cd_command(command * com)
     return r;
 }
 
-void change_prompt(char * curr_prompt, command * com){
+int change_prompt(char * curr_prompt, command * com){
     if(com->argv[1] != NULL){
         strncpy(curr_prompt, com->argv[1], MAX_PROMPT);
     } else {
@@ -70,5 +70,5 @@ void change_prompt(char * curr_prompt, command * com){
         curr_prompt[len-1] = '\0';
     }
 
-    return;
+    return 0;
 }
