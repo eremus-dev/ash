@@ -20,7 +20,6 @@ int main(void)
         // exits if CTL^D is entered
         if(commandline == NULL){
             feof(stdin);
-            exit_shell(0);
             exit(0);
         }
 
@@ -47,7 +46,7 @@ int main(void)
         int com_count = 0;
         while (com_queue[com_count] != NULL) 
         {
-            dump_structure(com_queue[com_count], com_count);  //prints command structs, comment out in final version.
+            //dump_structure(com_queue[com_count], com_count);  //prints command structs, comment out in final version.
             com_count++;
         }
 

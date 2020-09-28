@@ -46,7 +46,7 @@ void exec_command(command * com, int in, int out, int off)
         }
         // should be unreachable.
         printf("exec failed this should be unreachable\n");
-        exit(0);
+        exit(-1);
     } 
     else if( (check > 0) && (com->background == 0) )
     {
@@ -121,6 +121,5 @@ void print_prompt(char * prompt)
 void exit_shell(int stat)
 {
     printf("exit\n");
-    exit(0);
 }
 
