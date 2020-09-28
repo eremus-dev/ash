@@ -46,11 +46,13 @@ int handle_redirection(command * com, int * in, int * out, int * pipefd)
 {
     if(com->redirect_out != NULL)
     {
+        // stops including spaces in file names.
         int count = 0;
-        // open redirect_out save fd in out
         while(*(com->redirect_out+count) == ' '){
             count++;
         }
+
+        // open redirect_out save fd in out
         if((*out = open((com->redirect_out+count), O_RDWR | O_CREAT)) == -1){
             perror("open");
             *out = 0;
@@ -69,7 +71,15 @@ int handle_redirection(command * com, int * in, int * out, int * pipefd)
 
     if(com->redirect_in != NULL)
     {
-        if((*in = open(com->redirect_in, O_RDWR)) == -1){
+        // stops including spaces in file names.
+
+        int count = 0;
+        while(*(com->redirect_in+count) == ' '){
+            count++;
+        }
+
+        //open file descript and save to in
+        if((*in = open(com->redirect_in+count, O_RDWR)) == -1){
             perror("open");
             *in = 0;
             return -1;
