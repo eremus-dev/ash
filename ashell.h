@@ -17,6 +17,12 @@
  * 
  * If the command struct background is not set, waits on child process.
  * 
+ * Arguments:
+ *      com - Command Structure containing commands context
+ * 
+ * Returns:
+ *      void
+ * 
  * Should not return in the child process, 
  */
 void exec_command(command * com);
@@ -25,6 +31,12 @@ void exec_command(command * com);
  * Function to print the prompt set in the main.c 
  * 
  * Can be changed by calling function prompt with an argument or without for interactive change.
+ * 
+ * Arguments:
+ *      prompt - prompt buffer
+ * 
+ * Returns:
+ *      void
  */
 void print_prompt(char * prompt);
 
