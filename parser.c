@@ -521,7 +521,7 @@ bool check_last_separator(char * line)
    while (line[i] != '\0')
    {
       j = i + 1;
-      if (line[i] == '<' || line[i] == '>')
+      if (line[i] == '<' || line[i] == '>' || line[i] == '|')
       {
          while(line[j-1] != '\0')
          {

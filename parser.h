@@ -140,7 +140,7 @@ void print_human_readable(command * c, int count);
 bool check_double_sep(char *line);
 
 /**
- * Checks if any '>' or '<' are the last separators. newline char needs to be 
+ * Checks if any '>', '<', or '|' are the last separators. newline char needs to be 
  * replaced with '\0' before the call. returns true if an invalid separator is 
  * found, and false otherwise.
  */

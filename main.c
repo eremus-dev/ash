@@ -33,7 +33,7 @@ int main(void)
             free(commandline);
             continue;
         }
-        //checks if no '<' or '>' at end of commandline.
+        //checks if ant hanging '<', '>', or '|' at end of commandline.
         else if (check_last_separator(commandline))
         {
             perror("ERROR: invalid final separator\n");
