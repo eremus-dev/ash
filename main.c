@@ -75,9 +75,15 @@ int main(void)
                     break;
                 }
             }
+            else if(strcmp(com_queue[i]->com_name, "\n") == 0)
+            {
+                print_prompt(prompt);
+            }
             else
             {
+                
                 exec_command(com_queue[i]);
+                while(waitpid(-1, NULL, WNOHANG) != 0 && waitpid(-1, NULL, WNOHANG) != -1);
             }
             
         }
