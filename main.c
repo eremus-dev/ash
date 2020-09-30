@@ -58,10 +58,12 @@ int main(void)
             com_count++;
         }
 
-        int in = 0; // file decriptor for stdin redirection
-        int out = 0; // file descriptor for stdout redirection
-        int off = 0; // pipe end to close.
-        int pipefd[2] = {0}; // pipe fd's for handle redirection
+        fd_control control; // struct to encode input and output state.
+        control.in = 0; // file decriptor for stdin redirection
+        control.out = 0; // file descriptor for stdout redirection
+        control.off = 0; // pipe end to close.
+        control.pipefd[0] = 0; // pipe fd's for handle redirection
+        control.pipefd[1] = 0;
 
         for(int i=0; i<com_count; i++) //iterates through array of commands, executing each.
         {
@@ -81,9 +83,7 @@ int main(void)
                     exit_flag = false;
                     exit_shell(0);
                     break; //breaks out of for loop, com_queue and commandline should still free before prog terminates.
-                }
-
-                  
+                }    
             }
             else if(strcmp(com_queue[i]->com_name, "") == 0)
             {
@@ -92,10 +92,10 @@ int main(void)
             }
             else
             {
-                if(handle_redirection(com_queue[i], &in, &out, &off, pipefd) != -1)
+                if(handle_redirection(com_queue[i], &control) != -1)
                 {
                     //printf("Command: %s, in: %d, out: %d, off: %d\n", com_queue[i]->com_name, in, out, off);
-                    exec_command(com_queue[i], &in, &out, &off, &child_count);
+                    exec_command(com_queue[i], &control, &child_count);
                 } 
             }  
         } 
