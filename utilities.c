@@ -72,3 +72,14 @@ int change_prompt(char * curr_prompt, command * com){
 
     return 0;
 }
+
+void print_prompt(char * prompt)
+{
+    printf("\33[2K");
+    printf("\n\033[1;32m%s\033[0m ", prompt);
+}
+
+void exit_shell(int stat)
+{
+    printf("exit\n");
+}
