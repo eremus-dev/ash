@@ -12,6 +12,7 @@ bool parser_semicol_and_amp_test(void);
 bool parser_pipe_test(void);
 bool parser_spacing_test(void);
 bool parser_double_sep_test(void);
+bool parser_empty_line_test(void);
 
 //parser feature check list for marking guide
 
@@ -100,10 +101,24 @@ int main(void)
         fail++;
     }
 
+    //check if line is not empty.
+    if (parser_empty_line_test())
+    {
+        printf("function parser_empty_line_test() passed.\n");
+        success++;
+    }
+    else
+    {
+        printf("function parser_empty_line_test() failed.\n");
+        fail++;
+    }
+
+
 
     //parser marking guide checks
     printf("\tParser marking guide checks:\n");
     
+    //check feature 2
     if (parser_feature_2())
     {
         printf("function parser_feature_2() passed.\n");
@@ -488,5 +503,42 @@ bool parser_feature_2(void)
     clean_up(com_queue);  //free com_queue
     free(commandline);  //free commandline
 
+    return true;
+}
+
+bool parser_empty_line_test(void)
+{
+    char *com1 = " ";
+    char *com2 = "  ";
+    char *com3 = "ls";
+    char *com4 = "    ls";
+    char *com5 = "";
+
+    if(!check_if_empty(com1))
+    {
+        perror("ERROR: single empty space passed\n");
+        return false;
+    }
+    if(!check_if_empty(com2))
+    {
+        perror("ERROR: double empty space passed\n");
+        return false;
+    }
+    if(check_if_empty(com3))
+    {
+        perror("ERROR: valid line didn't pass\n");
+        return false;
+    }
+    if(check_if_empty(com4))
+    {
+        perror("ERROR: valid line with leading spaces didn't pass\n");
+        return false;
+    }
+    if(!check_if_empty(com5))
+    {
+        perror("ERROR: line with no char passed\n");
+        return false;
+    }
+    
     return true;
 }

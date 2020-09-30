@@ -146,4 +146,10 @@ bool check_double_sep(char *line);
  */
 bool check_last_separator(char * line);
 
+/**
+ * Checks if the input line is only spaces before '\0'. returns true if only spaces found,
+ * and false otherwise.
+ */
+bool check_if_empty(char * line);
+
 #endif

@@ -31,8 +31,15 @@ int main(void)
         newline_p = index(commandline, '\n');
         *newline_p = '\0';  //replace '\n' with '\0'
 
+        //checks if commandline is only spaces or empty
+        if(check_if_empty(commandline))
+        {
+            perror("ERROR: empty commandline\n");
+            free(commandline);
+            continue;
+        }
         //checks if invalid separator pair, frees commandline, moves to next loop.
-        if(check_double_sep(commandline))
+        else if(check_double_sep(commandline))
         {
             perror("ERROR: invalid pair of separators\n");
             free(commandline);
