@@ -146,4 +146,7 @@ bool check_double_sep(char *line);
  */
 bool check_last_separator(char * line);
 
+
+bool check_if_empty(char * line);
+
 #endif

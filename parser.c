@@ -544,3 +544,21 @@ bool check_last_separator(char * line)
 
    return false;
 }
+
+bool check_if_empty(char * line)
+{
+   int i = 0;
+   bool flag = true;
+
+   while (line[i] != '\0')
+   {
+      if (line[i] != ' ')
+      {
+         flag = false;
+      }
+      //printf("%d ", i);
+      i++;
+   }
+
+   return flag;
+}
