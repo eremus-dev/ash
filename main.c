@@ -74,15 +74,16 @@ int main(void)
             }
 
             int check;
-            if((check = utility_function_handler(com_queue[i], prompt)) > 0 ) //checks if exit is com_name
+            if((check = utility_function_handler(com_queue[i], prompt)) != 0 ) //checks if exit is com_name
             {
                 if(check == 2)
                 {
                     exit_flag = false;
                     exit_shell(0);
+                    break; //breaks out of for loop, com_queue and commandline should still free before prog terminates.
                 }
 
-                break;  //breaks out of for loop, com_queue and commandline should still free before prog terminates.
+                  
             }
             else if(strcmp(com_queue[i]->com_name, "") == 0)
             {
@@ -126,8 +127,9 @@ int utility_function_handler(command * com, char * prompt)
         if (r != 0)
         {
             perror("cd error");
-            return 1;
+            return -1;
         }
+        return 1;
     }
     else if (strcmp(com->com_name, "pwd") == 0)
     {
@@ -135,16 +137,18 @@ int utility_function_handler(command * com, char * prompt)
         if (r != 0)
         {
             perror("pwd error");
-            return 1;
+            return -1;
         }
+        return 1;
     }
     else if(strcmp(com->com_name, "prompt") == 0)
     {
         if(change_prompt(prompt, com) == -1)
         {
             perror("prompt");
-            return 1;
+            return -1;
         }
+        return 1;
     }
     
     return 0;
