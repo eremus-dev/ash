@@ -9,7 +9,6 @@ Functions to implement:
 #define UTILITIES_H
 
 #include "parser.h"
-
 #include <unistd.h>
 #include <linux/limits.h>
 
