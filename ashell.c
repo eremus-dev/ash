@@ -47,7 +47,7 @@ void exec_command(command * com, fd_control * control,  int * child_count)
     } 
     else if( (check > 0) && (com->background == 0) )
     {
-        wait(&status);
+        waitpid(check, &status, 0); // this collecting child process for sequential commands.
     } 
     else if( (check > 0) && (com->background == 1) )
     {

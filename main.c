@@ -1,6 +1,8 @@
 #include "ashell.h"
 
 int utility_function_handler(command * current, char * prompt);
+int signal_handler(void);
+int sigchild_handler(void);
 
 int main(void) 
 {
@@ -12,6 +14,11 @@ int main(void)
     bool exit_flag = true;  //for checking if exit was entered
     int print = 1; // for controlling printing of prompt
     
+    if(signal_handler() == -1){
+        perror("signal handler registration failure.");
+        exit(-1);
+    }
+
     while(exit_flag){
 
         if(print){
@@ -67,6 +74,7 @@ int main(void)
 
         for(int i=0; i<com_count; i++) //iterates through array of commands, executing each.
         {
+
             int pid;
             while( (pid = waitpid(-1, NULL, WNOHANG)) > 0 ){  // harvest zombies
                 printf("[%d] Done %d\n", child_count, pid);
@@ -151,5 +159,13 @@ int utility_function_handler(command * com, char * prompt)
         return 1;
     }
     
+    return 0;
+}
+
+int signal_handler(){
+    // handle sigchild registerstration.
+    
+    // handle blocking CTL+* signals
+
     return 0;
 }
