@@ -67,6 +67,7 @@ int main(void)
 
         for(int i=0; i<com_count; i++) //iterates through array of commands, executing each.
         {
+            
             int pid;
             while( (pid = waitpid(-1, NULL, WNOHANG)) > 0 ){  // harvest zombies
                 printf("[%d] Done %d\n", child_count, pid);

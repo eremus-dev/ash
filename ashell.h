@@ -16,7 +16,8 @@
  */
 enum MODE {
     PPE,
-    FLE
+    FLE,
+    NNE
 };
 
 /**
