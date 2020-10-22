@@ -163,9 +163,16 @@ int utility_function_handler(command * com, char * prompt)
 }
 
 int signal_handler(){
-    // handle sigchild registerstration.
-    
-    // handle blocking CTL+* signals
+    // handle sigchild registration.
+    sigset_t sigset;
 
+    if (sigemptyset(&sigset)==0) {
+        sigaddset(&sigset, SIGINT);
+        sigaddset(&sigset, SIGQUIT);
+        sigaddset(&sigset, SIGQUIT);
+        sigaddset(&sigset, SIGTSTP);
+    }
+    
+    sigprocmask(SIG_BLOCK, &sigset, NULL);
     return 0;
 }
