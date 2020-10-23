@@ -1,11 +1,11 @@
 #include "ashell.h"
 
 
-void exec_command(command * com, fd_control * control,  int * child_count)
+void exec_command(command * com, fd_control * control)
 {
     int status;
 
-    int check = fork();
+    pid_t check = fork();
 
     if(check < 0)
     {
@@ -25,8 +25,10 @@ void exec_command(command * com, fd_control * control,  int * child_count)
         }
 
         // redirect stdout if out != 0
-        if(control->out != 0){
-            if(dup2(control->out, 1) == -1){
+        if(control->out != 0)
+        {
+            if(dup2(control->out, 1) == -1)
+            {
                 perror("stdout dup2");
                 exit(-1);
             } 
@@ -47,12 +49,11 @@ void exec_command(command * com, fd_control * control,  int * child_count)
     } 
     else if( (check > 0) && (com->background == 0) )
     {
-        waitpid(check, &status, 0); // this collecting child process for sequential commands.
+        waitpid(check, &status, 0); // parent waits collecting child process for sequential commands.
     } 
     else if( (check > 0) && (com->background == 1) )
     {
-        *child_count += 1;
-        printf("[%d] %d\n", *child_count, check);
+        printf("%d\n", check);
     }
 
     if(control->out != 0)
@@ -88,10 +89,8 @@ int handle_redirection(command * com, fd_control * control)
             control->in = 0;
             return -1;
         }
-        control->m_in = FLE; // set input mode
 
     } else if(fcntl(control->pipefd[0], F_GETFD) != -1) {
-        control->m_in = PPE; // set input mode
         control->in = control->pipefd[0];
         control->off = control->pipefd[1];
     }
@@ -112,7 +111,6 @@ int handle_redirection(command * com, fd_control * control)
             control->out = 0;
             return -1;
         }
-        control->m_out = FLE;
     } 
     else if(com->pipe_to != 0) 
     {
@@ -121,7 +119,6 @@ int handle_redirection(command * com, fd_control * control)
             perror("pipe");
             return -1;
         } else {
-            control->m_out = PPE;
             control->out = control->pipefd[1];
         }
     } 
