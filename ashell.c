@@ -40,17 +40,16 @@ void exec_command(command *com, fd_control *control)
             control->off = 0;
         }
 
-        if (execvp(com->argv[0], com->argv) == -1)
-        {
-            perror(com->argv[0]);
-            exit(-1);
-        }
-        /*perror("here");
-        if (glob_exec(com) == -1)                      //execvp -> glob_exec() here
+        /*if (execvp(com->argv[0], com->argv) == -1)
         {
             perror(com->argv[0]);
             exit(-1);
         }*/
+        if (glob_exec(com) == -1)                      //execvp -> glob_exec() here
+        {
+            perror(com->argv[0]);
+            exit(-1);
+        }
         
     }
     else if ((check > 0) && (com->background == 0))
@@ -152,12 +151,9 @@ int handle_redirection(command *com, fd_control *control)
 
 int glob_exec(command *com)
 {
-    glob_t globcom;
 
     int i=0;
     int w = -1;
-
-    perror("here");
 
     for (i=0; i< sizeof(com->argv)/sizeof(com->argv[0]); i++)
     {
@@ -167,19 +163,21 @@ int glob_exec(command *com)
             w = i;
         }
     }
-    perror("here");
 
-    printf("%d", w);
+    glob_t globcom;
 
     globcom.gl_offs = w;
 
-    glob(com->argv[w], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom);
+    perror("hello1");
+    //int e = glob(com->argv[w], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom);
+    perror("hello2");
+    
     for (int j=0; j<w; j++)
     {
         globcom.gl_pathv[j] = com->argv[j];
     }
 
-    perror("here");
+    perror("HERE");
 
     if (w != -1)
     {
