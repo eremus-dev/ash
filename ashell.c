@@ -119,7 +119,7 @@ int handle_redirection(command *com, fd_control *control)
         }
 
         // open redirect_out save fd in out
-        if ((control->out = open((com->redirect_out + count), O_RDWR | O_CREAT)) == -1)
+        if ((control->out = open((com->redirect_out + count), O_RDWR | O_CREAT, S_IRWXU | S_IRWXG)) == -1)
         {
             perror("open");
             control->out = 0;
