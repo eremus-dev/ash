@@ -177,6 +177,7 @@ int utility_function_handler(command *com, char *prompt)
 
 /**
  * Function to handle the blocking and registering of signals.
+ * Code influenced by LECTURE NOTES FOR TOPIC 5
  */
 int signal_handler(void)
 {
