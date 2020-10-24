@@ -156,21 +156,22 @@ int glob_exec(command *com)
 
     int i=0;
     int wildcard = -1;
-
-    for (i=0; i < sizeof(com->argv); i++)
+    
+    while(com->argv[i] != NULL)
     {
         if (has_wildcard(com->argv[i]) == 0)
         {
             wildcard = i;
             break;
         }
+        i++;
     }
 
     globcom.gl_offs = wildcard;
 
     int check;
   
-    if( (check = glob(com->argv[wildcard], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom)) != 0)
+    if( wildcard != -1 && ((check = glob(com->argv[wildcard], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom)) != 0))
     {
         perror("glob");
         return -1;
@@ -199,8 +200,6 @@ int glob_exec(command *com)
     
     // should never return
     printf("End of glob: Should never print\n");
-
-    
     return 0;
 }
 
