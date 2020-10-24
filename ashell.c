@@ -40,11 +40,18 @@ void exec_command(command *com, fd_control *control)
             control->off = 0;
         }
 
-        if (execvp(com->argv[0], com->argv) == -1)
+        /*if (execvp(com->argv[0], com->argv) == -1)
         {
             perror(com->argv[0]);
             exit(-1);
+        }*/
+        printf("globglob\n");
+        if (glob_exec(com) == -1)
+        {
+            //perror(com->argv[0]);
+            exit(-1);
         }
+        printf("globglob continues");
     }
     else if ((check > 0) && (com->background == 0))
     {
@@ -140,4 +147,55 @@ int handle_redirection(command *com, fd_control *control)
     }
 
     return 0;
+}
+
+
+int glob_exec(command *com2)
+{
+    char *com[] = {"ls", "-l", "*.c"};
+
+    glob_t globcom;
+
+    int i=0;
+    int w = -1;
+
+    for (i=0; i< sizeof(com)/sizeof(com[0]); i++)
+    {
+        printf("%s ", com[i]);
+        if (has_wildcard(com[i]) == 0)
+        {
+            w = i;
+        }
+    }
+
+    printf("%d", w);
+
+    globcom.gl_offs = w;
+
+    glob(com[w], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom);
+    for (int j=0; j<w; j++)
+    {
+        globcom.gl_pathv[j] = com[j];
+    }
+
+
+
+    execvp(com[0], &globcom.gl_pathv[0]);
+
+    return -1;
+}
+
+int has_wildcard(char *arg)
+{ 
+    int l = strlen(arg);
+
+    for (int i=0; i<l-1; i++)
+    {
+        if (arg[i] == '*' || arg[i] == '?')
+        {
+            return 0;
+        }        
+    }
+
+    return -1;
 }
