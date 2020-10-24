@@ -1,8 +1,10 @@
 #include "ashell.h"
+#include <signal.h>
 
 int utility_function_handler(command * current, char * prompt);
 int signal_handler(void);
 int sigchild_handler(void);
+void child_handler(int signum);
 
 int main(void) 
 {
@@ -10,10 +12,11 @@ int main(void)
     char *newline_p;  //points to and replaces \n with \0.
     command **com_queue;  //array of pointers to command structs.
     char *commandline;  //holds commandline input.
-    int child_count = 0; // for keeping track of backgrounded processes
     bool exit_flag = true;  //for checking if exit was entered
     int print = 1; // for controlling printing of prompt
     
+    umask(0); // set umask for subsequent file openings.
+
     if(signal_handler() == -1){
         perror("signal handler registration failure.");
         exit(-1);
@@ -29,9 +32,16 @@ int main(void)
         commandline = malloc(sizeof(char) * MAX_COMMAND_LEN);  //allocate memory to cmd
         commandline = fgets(commandline, MAX_COMMAND_LEN, stdin);
        
-        if(commandline == NULL){  // exits if CTL^D is entered
-            feof(stdin);
-            exit(0);
+        // Check for slow system call failure for two slow system calls above.
+        if(commandline == NULL){  // exits if CTL^D is entered or if slow function call above has failed continue.
+            if(feof(stdin) != 0){
+                exit(0);
+            } else if(errno == EINTR){
+                continue;
+            } else {
+                free(commandline);
+                continue;
+            }
         }
 
         newline_p = index(commandline, '\n');
@@ -39,7 +49,7 @@ int main(void)
 
         if(check_if_empty(commandline))  //checks if commandline is only spaces or empty
         {
-            perror("ERROR: empty commandline\n");
+            //perror("ERROR: empty commandline\n");
             free(commandline);
             continue;
         }
@@ -75,14 +85,6 @@ int main(void)
         for(int i=0; i<com_count; i++) //iterates through array of commands, executing each.
         {
 
-            int pid;
-            while( (pid = waitpid(-1, NULL, WNOHANG)) > 0 ){  // harvest zombies
-                printf("[%d] Done %d\n", child_count, pid);
-                child_count--;
-                print_prompt(prompt);
-                print = 0;
-            }
-
             int check;
             if((check = utility_function_handler(com_queue[i], prompt)) != 0 ) //checks if exit is com_name
             {
@@ -93,17 +95,12 @@ int main(void)
                     break; //breaks out of for loop, com_queue and commandline should still free before prog terminates.
                 }    
             }
-            else if(strcmp(com_queue[i]->com_name, "") == 0)
-            {
-                print = 0;
-                print_prompt(prompt);
-            }
             else
             {
                 if(handle_redirection(com_queue[i], &control) != -1)
                 {
                     //printf("Command: %s, in: %d, out: %d, off: %d\n", com_queue[i]->com_name, in, out, off);
-                    exec_command(com_queue[i], &control, &child_count);
+                    exec_command(com_queue[i], &control);
                 } 
             }  
         } 
@@ -162,17 +159,44 @@ int utility_function_handler(command * com, char * prompt)
     return 0;
 }
 
-int signal_handler(){
-    // handle sigchild registration.
+/**
+ * Function to handle the blocking and registering of signals.
+ */
+int signal_handler(void){
+    // handle signal blocking registration.
     sigset_t sigset;
 
-    if (sigemptyset(&sigset)==0) {
+    if (sigemptyset(&sigset) == 0) {
         sigaddset(&sigset, SIGINT);
         sigaddset(&sigset, SIGQUIT);
         sigaddset(&sigset, SIGQUIT);
         sigaddset(&sigset, SIGTSTP);
+    } else {
+        return -1;
     }
     
-    sigprocmask(SIG_BLOCK, &sigset, NULL);
+    if(sigprocmask(SIG_BLOCK, &sigset, NULL) != 0){
+        perror("signal block failure");
+        return -1;
+    }
+
+    // handle sig child registration
+    struct sigaction chand;
+    chand.sa_handler = child_handler;
+    sigfillset( & (chand.sa_mask) );
+
+    if(sigaction(SIGCHLD, &chand, NULL) == -1){
+        perror("child handler registration");
+        return -1;
+    }
+
     return 0;
+}
+
+/**
+ * Sigchild signal handler to harvest zombie children
+ */
+void child_handler(int signum){
+    pid_t pid;
+    while( (pid = waitpid(-1, NULL, WNOHANG)) > 0 );
 }

@@ -8,18 +8,10 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-#include <signal.h>
-
-/**
- * Enum to encode input and output state to prevent deadlocks
- */
-enum MODE {
-    PPE,
-    FLE,
-    NNE
-};
+#include <errno.h>
 
 /**
  * Structure to carry redirection information and factiltate user closing pipe ends to prevent deadlocks.
@@ -29,8 +21,6 @@ typedef struct {
     int out; // fd to write out to
     int pipefd[2]; // both ends of the pipe
     int off; // fd to shutdown to stop deadlocks
-    enum MODE m_in; // mode of input {file or pipe}
-    enum MODE m_out; // mode of output {file or pipe}
 } fd_control;
 
 
@@ -50,7 +40,7 @@ typedef struct {
  * 
  * Should not return in the child process, 
  */
-void exec_command(command * com, fd_control * control, int * child_count);
+void exec_command(command * com, fd_control * control);
 
 /**
  * Function to handle the redirection of the childs stdin or stdout to either file or pipe.
