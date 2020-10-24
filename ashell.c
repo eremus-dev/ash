@@ -40,7 +40,8 @@ void exec_command(command *com, fd_control *control)
             control->off = 0;
         }
 
-        if(glob_exec(com) == -1){ //execvp -> glob_exec() here
+        if (glob_exec(com) == -1)
+        { //execvp -> glob_exec() here
             // this should never be executed. but if it is kill the child.
             perror(com->argv[0]);
             exit(-1);
@@ -67,6 +68,8 @@ void exec_command(command *com, fd_control *control)
         printf("%d\n", check);
     }
 
+    // Close all files, after this the only file that can be open
+    // is the read end of a pipe, which will be closed in the next loop.
     if (control->out != 0)
     {
         close(control->out);
@@ -77,6 +80,12 @@ void exec_command(command *com, fd_control *control)
     {
         close(control->in);
         control->in = 0;
+    }
+
+    if (control->off != 0)
+    {
+        close(control->off);
+        control->off = 0;
     }
 
     return;
@@ -97,12 +106,13 @@ int handle_redirection(command *com, fd_control *control)
 
         // handle spacing at end of filenames to stop file names with spaces.
         int fin = 0;
-        while ( (*(com->redirect_in + count + fin) != ' ') && (*(com->redirect_in + count + fin) != '\0'))
+        while ((*(com->redirect_in + count + fin) != ' ') && (*(com->redirect_in + count + fin) != '\0'))
         {
             fin++;
         }
 
-        if(*(com->redirect_in + count + fin) != '\0'){
+        if (*(com->redirect_in + count + fin) != '\0')
+        {
             *(com->redirect_in + count + fin) = '\0';
         }
 
@@ -131,12 +141,14 @@ int handle_redirection(command *com, fd_control *control)
 
         // remove spaces at end of file names to stop filenames with spaces.
         int fin = 0;
-        while ( (*(com->redirect_out + count + fin) != ' ') && (*(com->redirect_out + count + fin) != '\0'))
+        while ((*(com->redirect_out + count + fin) != ' ') && (*(com->redirect_out + count + fin) != '\0'))
         {
             fin++;
         }
 
-        if(*(com->redirect_out + count + fin) != '\0'){
+        // Null terminate the file name
+        if (*(com->redirect_out + count + fin) != '\0')
+        {
             *(com->redirect_out + count + fin) = '\0';
         }
 
