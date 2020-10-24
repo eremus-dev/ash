@@ -82,12 +82,6 @@ void exec_command(command *com, fd_control *control)
         control->in = 0;
     }
 
-    if (control->off != 0)
-    {
-        close(control->off);
-        control->off = 0;
-    }
-
     return;
 }
 
