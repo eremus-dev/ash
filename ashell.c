@@ -40,11 +40,11 @@ void exec_command(command *com, fd_control *control)
             control->off = 0;
         }
 
-        /*if (execvp(com->argv[0], com->argv) == -1)
-        {
-            perror(com->argv[0]);
-            exit(-1);
-        }*/
+        // if (execvp(com->argv[0], com->argv) == -1)
+        // {
+        //     perror(com->argv[0]);
+        //     exit(-1);
+        // }
 
         if (glob_exec(com) == -1)                      //execvp -> glob_exec() here
         {
@@ -155,52 +155,64 @@ int glob_exec(command *com)
     glob_t globcom;
 
     int i=0;
-    int w = -1;
-
-    for (i=0; i< sizeof(com->argv)/sizeof(com->argv[0]); i++)
+    int wildcard = -1;
+    
+    while(com->argv[i] != NULL)
     {
-        printf("%s ", com->argv[i]);
         if (has_wildcard(com->argv[i]) == 0)
         {
-            w = i;
+            wildcard = i;
+            break;
         }
+        i++;
     }
 
-    printf("%d", w);
+    globcom.gl_offs = wildcard;
 
-    globcom.gl_offs = w;
+    int check;
+  
+    if( wildcard != -1 && ((check = glob(com->argv[wildcard], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom)) != 0))
+    {
+        perror("glob");
+        return -1;
+    }
+  
 
-    glob(com->argv[w], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom);
-    for (int j=0; j<w; j++)
+    for (int j=0; j<wildcard; j++)
     {
         globcom.gl_pathv[j] = com->argv[j];
     }
 
 
-    if (w != -1)
+    if (wildcard != -1)
     {
-        execvp(com->argv[0], &globcom.gl_pathv[0]);
+        if(execvp(com->argv[0], &globcom.gl_pathv[0]) == -1){
+            return -1;
+        }
     }
     else
     {
-        execvp(com->argv[0], com->argv);
+        if(execvp(com->argv[0], com->argv) == -1)
+        {
+            return -1;
+        }
     }
     
-
-    return -1;
+    // should never return
+    printf("End of glob: Should never print\n");
+    return 0;
 }
 
 int has_wildcard(char *arg)
 { 
     int l = strlen(arg);
 
-    for (int i=0; i<l-1; i++)
+    for (int i=0; i<l; i++)
     {
         if (arg[i] == '*' || arg[i] == '?')
         {
             return 0;
         }        
     }
-
     return -1;
 }
