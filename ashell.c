@@ -177,6 +177,7 @@ int glob_exec(command *com)
     {
         if (execvp(com->argv[0], &globcom.gl_pathv[0]) == -1)
         {
+            globfree(&globcom);
             return -1;
         }
     }
@@ -184,11 +185,13 @@ int glob_exec(command *com)
     {
         if (execvp(com->argv[0], com->argv) == -1)
         {
+            globfree(&globcom);
             return -1;
         }
     }
 
     // should never return
+    globfree(&globcom);
     return -1;
 }
 
