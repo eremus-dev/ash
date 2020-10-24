@@ -12,9 +12,10 @@ int main(void)
     bool exit_flag = true;                   //for checking if exit was entered
     int print = 1;                           // for controlling printing of prompt
 
+    // blocks SIGINT, SIGQUIT, SIGSTOP and registers SIGCHILD handler.
     if (signal_handler() == -1)
     {
-        perror("signal handler registration failure.");
+        perror("signal handler registration failure");
         exit(-1);
     }
 
@@ -27,7 +28,7 @@ int main(void)
         }
         print = 1;
 
-        char buf[sizeof(char) * MAX_COMMAND_LEN] = {'\0'};
+        char buf[sizeof(char) * MAX_COMMAND_LEN] = {'\0'}; // buffer for main commandline
         commandline = buf;
 
         commandline = fgets(commandline, MAX_COMMAND_LEN, stdin);
@@ -68,7 +69,7 @@ int main(void)
             continue;
         }
 
-        com_queue = process_cmd_line(commandline, 1);
+        com_queue = process_cmd_line(commandline, 1); 
 
         int com_count = 0;
         while (com_queue[com_count] != NULL)
