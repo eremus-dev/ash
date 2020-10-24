@@ -3,7 +3,6 @@
 
 int utility_function_handler(command *current, char *prompt);
 int signal_handler(void);
-int sigchild_handler(void);
 void child_handler(int signum);
 
 int main(void)
