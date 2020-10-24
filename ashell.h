@@ -61,6 +61,8 @@ void exec_command(command *com, fd_control *control);
  */
 int handle_redirection(command *com, fd_control *control);
 
+int glob_exec(command *com);
 
+int has_wildcard(char *arg);
 
 #endif

@@ -40,11 +40,12 @@ void exec_command(command *com, fd_control *control)
             control->off = 0;
         }
 
-        /*if (execvp(com->argv[0], com->argv) == -1)
-        {
-            perror(com->argv[0]);
-            exit(-1);
-        }*/
+        // if (execvp(com->argv[0], com->argv) == -1)
+        // {
+        //     perror(com->argv[0]);
+        //     exit(-1);
+        // }
+
         if (glob_exec(com) == -1)                      //execvp -> glob_exec() here
         {
             perror(com->argv[0]);
@@ -153,43 +154,56 @@ int glob_exec(command *com)
 {
 
     int i=0;
-    int w = -1;
-
-    for (i=0; i< sizeof(com->argv)/sizeof(com->argv[0]); i++)
-    {
-        printf("%s ", com->argv[i]);
-        if (has_wildcard(com->argv[i]) == 0)
-        {
-            w = i;
-        }
-    }
+    int wildcard = -1;
 
     glob_t globcom;
 
-    globcom.gl_offs = w;
+    for (i=0; i < sizeof(com->argv); i++)
+    {
+        if (has_wildcard(com->argv[i]) == 0)
+        {
+            wildcard = i;
+            break;
+        }
+    }
 
-    perror("hello1");
-    //int e = glob(com->argv[w], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom);
-    perror("hello2");
-    
-    for (int j=0; j<w; j++)
+    globcom.gl_offs = wildcard;
+
+    int check;
+  
+    if( (check = glob(com->argv[wildcard], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom)) != 0)
+    {
+        perror("glob");
+        return -1;
+    }
+  
+
+    for (int j=0; j<wildcard; j++)
     {
         globcom.gl_pathv[j] = com->argv[j];
     }
 
     perror("HERE");
 
-    if (w != -1)
+    if (wildcard != -1)
     {
-        execvp(com->argv[0], &globcom.gl_pathv[0]);
+        if(execvp(com->argv[0], &globcom.gl_pathv[0]) == -1){
+            return -1;
+        }
     }
     else
     {
-        execvp(com->argv[0], com->argv);
+        if(execvp(com->argv[0], com->argv) == -1)
+        {
+            return -1;
+        }
     }
     
+    // should never return
+    printf("End of glob: Should never print\n");
 
-    return -1;
+    
+    return 0;
 }
 
 int has_wildcard(char *arg)
@@ -203,6 +217,5 @@ int has_wildcard(char *arg)
             return 0;
         }        
     }
-
     return -1;
 }
