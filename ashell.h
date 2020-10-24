@@ -16,13 +16,13 @@
 /**
  * Structure to carry redirection information and factiltate user closing pipe ends to prevent deadlocks.
  */
-typedef struct {
-    int in; // fd to read in from
-    int out; // fd to write out to
+typedef struct
+{
+    int in;        // fd to read in from
+    int out;       // fd to write out to
     int pipefd[2]; // both ends of the pipe
-    int off; // fd to shutdown to stop deadlocks
+    int off;       // fd to shutdown to stop deadlocks
 } fd_control;
-
 
 /**
  * Function to execute to fork child process and execvp the command given
@@ -40,7 +40,7 @@ typedef struct {
  * 
  * Should not return in the child process, 
  */
-void exec_command(command * com, fd_control * control);
+void exec_command(command *com, fd_control *control);
 
 /**
  * Function to handle the redirection of the childs stdin or stdout to either file or pipe.
@@ -58,6 +58,6 @@ void exec_command(command * com, fd_control * control);
  *  
  *      
  */
-int handle_redirection(command * com, fd_control * control);
+int handle_redirection(command *com, fd_control *control);
 
 #endif
