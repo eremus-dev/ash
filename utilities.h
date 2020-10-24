@@ -21,7 +21,7 @@ Functions to implement:
  * Return:
  *      void
  */
-int change_prompt(char * prompt, command * com);
+int change_prompt(char *prompt, command *com);
 
 /**
  * function to display the current working directory.
@@ -32,7 +32,7 @@ int change_prompt(char * prompt, command * com);
  *  Return:
  *       0 if successful, -1 if not.
  */
-int pwd_command(command * com);
+int pwd_command(command *com);
 
 /**
  * function to navigate to a particular directory
@@ -43,7 +43,7 @@ int pwd_command(command * com);
  * Returns:
  *      0 if successful, -1 if not.
  */
-int cd_command(command * com);
+int cd_command(command *com);
 
 /**
  * Function to print the prompt set in the main.c 
@@ -56,7 +56,7 @@ int cd_command(command * com);
  * Returns:
  *      void
  */
-void print_prompt(char * prompt);
+void print_prompt(char *prompt);
 
 /**
  * Function to print exit on exit, probably shouldn't exist.
