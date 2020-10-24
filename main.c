@@ -14,8 +14,6 @@ int main(void)
     char *commandline;  //holds commandline input.
     bool exit_flag = true;  //for checking if exit was entered
     int print = 1; // for controlling printing of prompt
-    
-    umask(0); // set umask for subsequent file openings.
 
     if(signal_handler() == -1){
         perror("signal handler registration failure.");
