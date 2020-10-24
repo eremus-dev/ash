@@ -68,6 +68,8 @@ void exec_command(command *com, fd_control *control)
         printf("%d\n", check);
     }
 
+    // Close all files, after this the only file that can be open
+    // is the read end of a pipe, which will be closed in the next loop.
     if (control->out != 0)
     {
         close(control->out);
