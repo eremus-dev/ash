@@ -81,6 +81,8 @@ void exec_command(command * com, fd_control * control)
 
 int handle_redirection(command * com, fd_control * control)
 {
+    umask(0); // set umask for subsequent file openings.
+    
     if(com->redirect_in != NULL)
     {
         // stops including spaces in file names.
