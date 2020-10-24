@@ -3,7 +3,6 @@
 
 int utility_function_handler(command *current, char *prompt);
 int signal_handler(void);
-int sigchild_handler(void);
 void child_handler(int signum);
 
 int main(void)
@@ -30,15 +29,12 @@ int main(void)
         }
         print = 1;
 
-        if ((commandline = malloc(sizeof(char) * MAX_COMMAND_LEN)) == NULL)
-        { //allocate memory to cmd
-            perror("malloc failure");
-            continue;
-        }
+        char buf[sizeof(char) * MAX_COMMAND_LEN] = {'\0'};
+        commandline = buf;
 
         commandline = fgets(commandline, MAX_COMMAND_LEN, stdin);
 
-        // Check for slow system call failure for two slow system calls above.
+        // Check for slow system call failure for the slow system calls above.
         if (commandline == NULL)
         { // exits if CTL^D is entered or if slow function call above has failed continue.
             if (feof(stdin) != 0)
@@ -51,7 +47,6 @@ int main(void)
             }
             else
             {
-                free(commandline);
                 continue;
             }
         }
@@ -62,22 +57,16 @@ int main(void)
         if (check_if_empty(commandline)) //checks if commandline is only spaces or empty
         {
             //perror("ERROR: empty commandline\n");
-            free(commandline);
-            commandline = NULL;
             continue;
         }
         else if (check_double_sep(commandline)) //checks if invalid separator pair, frees commandline, moves to next loop.
         {
             perror("ERROR: invalid pair of separators\n");
-            free(commandline);
-            commandline = NULL;
             continue;
         }
         else if (check_last_separator(commandline)) //checks if ant hanging '<', '>', or '|' at end of commandline.
         {
             perror("ERROR: invalid final separator\n");
-            free(commandline);
-            commandline = NULL;
             continue;
         }
 
@@ -86,7 +75,6 @@ int main(void)
         int com_count = 0;
         while (com_queue[com_count] != NULL)
         {
-            //dump_structure(com_queue[com_count], com_count);  //prints command structs, comment out in final version.
             com_count++;
         }
 
@@ -114,14 +102,11 @@ int main(void)
             {
                 if (handle_redirection(com_queue[i], &control) != -1)
                 {
-                    //printf("Command: %s, in: %d, out: %d, off: %d\n", com_queue[i]->com_name, in, out, off);
                     exec_command(com_queue[i], &control);
                 }
             }
         }
         clean_up(com_queue);
-        free(commandline);
-        commandline = NULL;
     }
 
     return 0;
@@ -177,6 +162,7 @@ int utility_function_handler(command *com, char *prompt)
 
 /**
  * Function to handle the blocking and registering of signals.
+ * Code influenced by LECTURE NOTES FOR TOPIC 5
  */
 int signal_handler(void)
 {
