@@ -45,13 +45,13 @@ void exec_command(command *com, fd_control *control)
             perror(com->argv[0]);
             exit(-1);
         }*/
-        printf("globglob\n");
-        if (glob_exec(com) == -1)
+
+        if (glob_exec(com) == -1)                      //execvp -> glob_exec() here
         {
-            //perror(com->argv[0]);
+            perror(com->argv[0]);
             exit(-1);
         }
-        printf("globglob continues");
+        
     }
     else if ((check > 0) && (com->background == 0))
     {
@@ -150,19 +150,17 @@ int handle_redirection(command *com, fd_control *control)
 }
 
 
-int glob_exec(command *com2)
+int glob_exec(command *com)
 {
-    char *com[] = {"ls", "-l", "*.c"};
-
     glob_t globcom;
 
     int i=0;
     int w = -1;
 
-    for (i=0; i< sizeof(com)/sizeof(com[0]); i++)
+    for (i=0; i< sizeof(com->argv)/sizeof(com->argv[0]); i++)
     {
-        printf("%s ", com[i]);
-        if (has_wildcard(com[i]) == 0)
+        printf("%s ", com->argv[i]);
+        if (has_wildcard(com->argv[i]) == 0)
         {
             w = i;
         }
@@ -172,15 +170,22 @@ int glob_exec(command *com2)
 
     globcom.gl_offs = w;
 
-    glob(com[w], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom);
+    glob(com->argv[w], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom);
     for (int j=0; j<w; j++)
     {
-        globcom.gl_pathv[j] = com[j];
+        globcom.gl_pathv[j] = com->argv[j];
     }
 
 
-
-    execvp(com[0], &globcom.gl_pathv[0]);
+    if (w != -1)
+    {
+        execvp(com->argv[0], &globcom.gl_pathv[0]);
+    }
+    else
+    {
+        execvp(com->argv[0], com->argv);
+    }
+    
 
     return -1;
 }

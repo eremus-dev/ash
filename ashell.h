@@ -61,9 +61,14 @@ void exec_command(command *com, fd_control *control);
  */
 int handle_redirection(command *com, fd_control *control);
 
+/**
+ * glob executing function. if wildcard detected, glob execute, else normal execute
+ */
+int glob_exec(command *com);
 
-int glob_exec(command *com2);
-
+/**
+ * returns 0 if wildcard * or ? are found in string, -1 otherwise.
+ */
 int has_wildcard(char *arg);
 
 #endif
