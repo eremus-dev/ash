@@ -62,7 +62,12 @@ void exec_command(command *com, fd_control *control);
 int handle_redirection(command *com, fd_control *control);
 
 /**
- * glob executing function. if wildcard detected, glob execute, else normal execute
+ * Function to handle the execution of commands. Implements handling for glob executing function. 
+ * If glob wildcard is detected, execute using glob handline code, else normal execute.
+ * Arguments:
+ *   com - command * to command to execute.
+ * Returns:
+ *     -1 on error but should never return.
  */
 int glob_exec(command *com);
 
