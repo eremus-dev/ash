@@ -30,15 +30,15 @@ int main(void)
         }
         print = 1;
 
-        if ((commandline = malloc(sizeof(char) * MAX_COMMAND_LEN)) == NULL)
+        if ((commandline = malloc(sizeof(char) * MAX_COMMAND_LEN)) == NULL) // handle slow system call interrupts.
         { //allocate memory to cmd
             perror("malloc failure");
-            continue;
+            continue; 
         }
 
         commandline = fgets(commandline, MAX_COMMAND_LEN, stdin);
 
-        // Check for slow system call failure for two slow system calls above.
+        // Check for slow system call failure for the slow system calls above.
         if (commandline == NULL)
         { // exits if CTL^D is entered or if slow function call above has failed continue.
             if (feof(stdin) != 0)
