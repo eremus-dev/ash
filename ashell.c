@@ -95,6 +95,17 @@ int handle_redirection(command *com, fd_control *control)
             count++;
         }
 
+        // handle spacing at end of filenames to stop file names with spaces.
+        int fin = 0;
+        while ( (*(com->redirect_in + count + fin) != ' ') && (*(com->redirect_in + count + fin) != '\0'))
+        {
+            fin++;
+        }
+
+        if(*(com->redirect_in + count + fin) != '\0'){
+            *(com->redirect_in + count + fin) = '\0';
+        }
+
         //open file descript and save to in
         if ((control->in = open(com->redirect_in + count, O_RDWR)) == -1)
         {
@@ -116,6 +127,17 @@ int handle_redirection(command *com, fd_control *control)
         while (*(com->redirect_out + count) == ' ')
         {
             count++;
+        }
+
+        // remove spaces at end of file names to stop filenames with spaces.
+        int fin = 0;
+        while ( (*(com->redirect_out + count + fin) != ' ') && (*(com->redirect_out + count + fin) != '\0'))
+        {
+            fin++;
+        }
+
+        if(*(com->redirect_out + count + fin) != '\0'){
+            *(com->redirect_out + count + fin) = '\0';
         }
 
         // open redirect_out save fd in out
@@ -177,6 +199,7 @@ int glob_exec(command *com)
     {
         if (execvp(com->argv[0], &globcom.gl_pathv[0]) == -1)
         {
+            globfree(&globcom);
             return -1;
         }
     }
@@ -184,11 +207,13 @@ int glob_exec(command *com)
     {
         if (execvp(com->argv[0], com->argv) == -1)
         {
+            globfree(&globcom);
             return -1;
         }
     }
 
     // should never return
+    globfree(&globcom);
     return -1;
 }
 
