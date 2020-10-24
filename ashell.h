@@ -11,8 +11,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-
-
+#include <errno.h>
 
 /**
  * Structure to carry redirection information and factiltate user closing pipe ends to prevent deadlocks.

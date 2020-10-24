@@ -36,8 +36,10 @@ int main(void)
         if(commandline == NULL){  // exits if CTL^D is entered or if slow function call above has failed continue.
             if(feof(stdin) != 0){
                 exit(0);
+            } else if(errno == EINTR){
+                continue;
             } else {
-                print = 0; // don't reprint print prompt
+                free(commandline);
                 continue;
             }
         }

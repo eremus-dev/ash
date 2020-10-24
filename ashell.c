@@ -1,6 +1,5 @@
 #include "ashell.h"
 
-
 void exec_command(command * com, fd_control * control)
 {
     int status;
@@ -49,7 +48,16 @@ void exec_command(command * com, fd_control * control)
     } 
     else if( (check > 0) && (com->background == 0) )
     {
-        waitpid(check, &status, 0); // parent waits collecting child process for sequential commands.
+        int again = 1;
+        while(again){ // handle slow system call interrupt
+            again = 0;
+            pid_t pid = waitpid(check, &status, 0); // parent waits collecting child process for sequential commands.
+            if(pid == -1){
+                if(errno == EINTR){
+                    again = 1;
+                }
+            }
+        }
     } 
     else if( (check > 0) && (com->background == 1) )
     {
