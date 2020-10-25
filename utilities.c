@@ -84,4 +84,46 @@ void exit_shell(int stat)
     printf("exit\n");
 }
 
+int signal_handler(void)
+{
+    // handle signal blocking registration.
+    sigset_t sigset;
 
+    if (sigemptyset(&sigset) == 0)
+    {
+        sigaddset(&sigset, SIGINT);
+        sigaddset(&sigset, SIGQUIT);
+        sigaddset(&sigset, SIGQUIT);
+        sigaddset(&sigset, SIGTSTP);
+    }
+    else
+    {
+        return -1;
+    }
+
+    if (sigprocmask(SIG_BLOCK, &sigset, NULL) != 0)
+    {
+        perror("signal block failure");
+        return -1;
+    }
+
+    // handle sig child registration
+    struct sigaction chand;
+    chand.sa_handler = child_handler;
+    sigfillset(&(chand.sa_mask));
+
+    if (sigaction(SIGCHLD, &chand, NULL) == -1)
+    {
+        perror("child handler registration");
+        return -1;
+    }
+
+    return 0;
+}
+
+void child_handler(int signum)
+{
+    pid_t pid;
+    while ((pid = waitpid(-1, NULL, WNOHANG)) > 0)
+        ;
+}

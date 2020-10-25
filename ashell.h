@@ -1,3 +1,11 @@
+/**
+ * Header file for the ashell execution module. 
+ * Functionality implemented includes:
+ *      command execution
+ *      file and pipe input output redirection
+ *      glob wildcard expansion
+ */
+
 #ifndef ASHELL_H
 #define ASHELL_H
 
@@ -61,8 +69,23 @@ void exec_command(command *com, fd_control *control);
  */
 int handle_redirection(command *com, fd_control *control);
 
+/**
+ * Function to handle the execution of commands. Implements handling for glob executing function. 
+ * If glob wildcard is detected, execute using glob handline code, else normal execute.
+ * Arguments:
+ *   com - command * to command to execute.
+ * Returns:
+ *     -1 on error but should never return.
+ */
 int glob_exec(command *com);
 
+/**
+ * Function for checking if string contains a wildcard character.
+ * Arguments:
+ *   arg - char * string to check for wildcards.
+ * Returns:
+ *     int - 0 if wildcard found, -1 otherwise.
+ */
 int has_wildcard(char *arg);
 
 #endif

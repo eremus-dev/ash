@@ -1,16 +1,21 @@
 /*
 Header file for the shell utilties. 
-Functions to implement:
+Shell functionality implemented:
     change prompt
     cd
+    pwd
     exit
+    signal handling
 */
+
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
 #include "parser.h"
 #include <unistd.h>
 #include <linux/limits.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 /**
  * function to change the current prompt string to the argument passed to prompt command.
@@ -62,5 +67,17 @@ void print_prompt(char *prompt);
  * Function to print exit on exit, probably shouldn't exist.
  */
 void exit_shell(int stat);
+
+
+/**
+ * Function to handle the blocking and registering of signals.
+ * Code influenced by LECTURE NOTES FOR TOPIC 5
+ */
+int signal_handler(void);
+
+/**
+ * Sigchild signal handler to harvest zombie children
+ */
+void child_handler(int signum);
 
 #endif
