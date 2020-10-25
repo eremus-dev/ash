@@ -123,7 +123,7 @@ void process_cmd(char *cmd, command * result)
       simple_cmd = strdup(pc);
       pc = strtok(NULL, "\0");
 
-      /*Output redirection may have been missed becuase input is checked
+      /*Output redirection may have been missed because input is checked
        * first.*/
       if ((mc = index(simple_cmd, '>')) != NULL)
          process_cmd(simple_cmd, result);

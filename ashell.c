@@ -40,18 +40,11 @@ void exec_command(command *com, fd_control *control)
             control->off = 0;
         }
 
-        // if (execvp(com->argv[0], com->argv) == -1)
-        // {
-        //     perror(com->argv[0]);
-        //     exit(-1);
-        // }
-
-        if (glob_exec(com) == -1)                      //execvp -> glob_exec() here
-        {
+        if(glob_exec(com) == -1){ //execvp -> glob_exec() here
+            // this should never be executed. but if it is kill the child.
             perror(com->argv[0]);
             exit(-1);
         }
-        
     }
     else if ((check > 0) && (com->background == 0))
     {
@@ -149,18 +142,17 @@ int handle_redirection(command *com, fd_control *control)
     return 0;
 }
 
-
 int glob_exec(command *com)
 {
 
-    int i=0;
-    int wildcard = -1;
+    int i = 0;         // index counter
+    int wildcard = -1; // index of wildcard
 
     glob_t globcom;
-    
-    while(com->argv[i] != NULL)
+
+    while (com->argv[i] != NULL) // search argv for wildcard
     {
-        if (has_wildcard(com->argv[i]) == 0)
+        if (has_wildcard(com->argv[i]) == 0) // if it has the wildcard we get index and break from loop.
         {
             wildcard = i;
             break;
@@ -168,51 +160,49 @@ int glob_exec(command *com)
         i++;
     }
 
-    globcom.gl_offs = wildcard;
+    globcom.gl_offs = wildcard; // glob wildcard offset
 
-    int check;
-  
-    if( wildcard != -1 && ((check = glob(com->argv[wildcard], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom)) != 0))
+    int check; // error checking for glob
+    if (wildcard != -1 && ((check = glob(com->argv[wildcard], GLOB_DOOFFS | GLOB_PERIOD, NULL, &globcom)) != 0))
     {
         perror("glob");
         return -1;
     }
-  
 
-    for (int j=0; j<wildcard; j++)
+    for (int j = 0; j < wildcard; j++) // build argv array for matched paths
     {
         globcom.gl_pathv[j] = com->argv[j];
     }
 
-    if (wildcard != -1)
+    if (wildcard != -1) // is it a normal command or a globed command.
     {
-        if(execvp(com->argv[0], &globcom.gl_pathv[0]) == -1){
+        if (execvp(com->argv[0], &globcom.gl_pathv[0]) == -1)
+        {
             return -1;
         }
     }
     else
     {
-        if(execvp(com->argv[0], com->argv) == -1)
+        if (execvp(com->argv[0], com->argv) == -1)
         {
             return -1;
         }
     }
-    
+
     // should never return
-    printf("End of glob: Should never print\n");
-    return 0;
+    return -1;
 }
 
 int has_wildcard(char *arg)
-{ 
+{
     int l = strlen(arg);
 
-    for (int i=0; i<l; i++)
+    for (int i = 0; i < l; i++)
     {
         if (arg[i] == '*' || arg[i] == '?')
         {
             return 0;
-        }        
+        }
     }
     return -1;
 }
