@@ -1,10 +1,13 @@
 /*
 Header file for the shell utilties. 
-Functions to implement:
+Shell functionality implemented:
     change prompt
     cd
+    pwd
     exit
+    signal handling
 */
+
 #ifndef UTILITIES_H
 #define UTILITIES_H
 

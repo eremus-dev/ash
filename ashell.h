@@ -1,3 +1,11 @@
+/**
+ * Header file for the ashell execution module. 
+ * Functionality implemented includes:
+ *      command execution
+ *      file and pipe input output redirection
+ *      glob wildcard expansion
+ */
+
 #ifndef ASHELL_H
 #define ASHELL_H
 
