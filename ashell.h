@@ -80,7 +80,11 @@ int handle_redirection(command *com, fd_control *control);
 int glob_exec(command *com);
 
 /**
- * returns 0 if wildcard * or ? are found in string, -1 otherwise.
+ * Function for checking if string contains a wildcard character.
+ * Arguments:
+ *   arg - char * string to check for wildcards.
+ * Returns:
+ *     int - 0 if wildcard found, -1 otherwise.
  */
 int has_wildcard(char *arg);
 

@@ -172,10 +172,11 @@ int handle_redirection(command *com, fd_control *control)
 
 int glob_exec(command *com)
 {
-    glob_t globcom;
 
     int i = 0;         // index counter
     int wildcard = -1; // index of wildcard
+
+    glob_t globcom;
 
     while (com->argv[i] != NULL) // search argv for wildcard
     {

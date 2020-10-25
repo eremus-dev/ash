@@ -123,7 +123,7 @@ void process_cmd(char *cmd, command * result)
       simple_cmd = strdup(pc);
       pc = strtok(NULL, "\0");
 
-      /*Output redirection may have been missed becuase input is checked
+      /*Output redirection may have been missed because input is checked
        * first.*/
       if ((mc = index(simple_cmd, '>')) != NULL)
          process_cmd(simple_cmd, result);
@@ -493,7 +493,7 @@ bool check_double_sep(char *line)
       {
          while (line[j] != '\0')
          {
-            if (line[j] == ' ')
+            if (line[j] == ' ' || line[j] == '\t')
             {
                j++;
             }
@@ -529,7 +529,7 @@ bool check_last_separator(char * line)
             {
                return true;
             }
-            if (line[j] == ' ')
+            if (line[j] == ' ' || line[j] == '\t')
             {
                j++;
             }
@@ -552,7 +552,7 @@ bool check_if_empty(char * line)
 
    while (line[i] != '\0')
    {
-      if (line[i] != ' ')
+      if (line[i] != ' ' && line[i] != '\t')
       {
          flag = false;
       }
