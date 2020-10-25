@@ -493,7 +493,7 @@ bool check_double_sep(char *line)
       {
          while (line[j] != '\0')
          {
-            if (line[j] == ' ')
+            if (line[j] == ' ' || line[j] == '\t')
             {
                j++;
             }
@@ -529,7 +529,7 @@ bool check_last_separator(char * line)
             {
                return true;
             }
-            if (line[j] == ' ')
+            if (line[j] == ' ' || line[j] == '\t')
             {
                j++;
             }
@@ -552,7 +552,7 @@ bool check_if_empty(char * line)
 
    while (line[i] != '\0')
    {
-      if (line[i] != ' ')
+      if (line[i] != ' ' && line[i] != '\t')
       {
          flag = false;
       }
