@@ -1,7 +1,7 @@
 # Ash Shell
 Another Shell indefensibly written in C.
 
-Shell Project for operating systems unit. Relatively full featured. 
+Shell Project for operating systems unit.
 
 ![ashell](./ashell.png)
 
