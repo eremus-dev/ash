@@ -175,8 +175,20 @@ int glob_exec(command *com)
 
     int i = 0;         // index counter
     int wildcard = -1; // index of wildcard
+    int wildc_num = 0;  //num of wildcard elements
 
     glob_t globcom;
+
+    while (com->argv[i] != NULL) // search argv for wildcard
+    {
+        if (has_wildcard(com->argv[i]) == 0) // if it has the wildcard we get index and break from loop.
+        {
+            wildc_num++;
+        }
+        i++;
+    }
+
+    i = 0;
 
     while (com->argv[i] != NULL) // search argv for wildcard
     {
